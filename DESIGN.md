@@ -1,5 +1,5 @@
 ---
-version: "alpha"
+version: "1.1"
 name: "Cuebik Interface Design System"
 description: "Desktop banking workspace and responsive public website"
 colors:
@@ -78,16 +78,28 @@ components:
     rounded: "{rounded.sm}"
     height: 40px
   buttonSecondary:
-    backgroundColor: "{colors.surfaceLight}"
-    textColor: "{colors.textLight}"
     typography: "{typography.body}"
     rounded: "{rounded.sm}"
     height: 40px
+    light:
+      backgroundColor: "{colors.surfaceLight}"
+      textColor: "{colors.textLight}"
+      borderColor: "{colors.borderLight}"
+    dark:
+      backgroundColor: "{colors.surfaceDark}"
+      textColor: "{colors.textDark}"
+      borderColor: "{colors.borderDark}"
   card:
-    backgroundColor: "{colors.surfaceLight}"
-    textColor: "{colors.textLight}"
     rounded: "{rounded.md}"
     padding: "{spacing.lg}"
+    light:
+      backgroundColor: "{colors.surfaceLight}"
+      textColor: "{colors.textLight}"
+      borderColor: "{colors.borderLight}"
+    dark:
+      backgroundColor: "{colors.surfaceDark}"
+      textColor: "{colors.textDark}"
+      borderColor: "{colors.borderDark}"
 ---
 
 # Cuebik — Interface Design System
@@ -107,7 +119,7 @@ components:
 
 ## Colors
 
-Use the front-matter tokens as canonical UI values. They implement the core palette in `BRAND.md` plus supporting neutrals; supporting tokens are not new brand colors. Components must consume semantic tokens rather than hard-coded colors.
+Use the front-matter tokens as canonical UI values. They implement the core palette in `BRAND.md` plus supporting neutrals; supporting tokens are not new brand colors. Components must consume semantic tokens rather than hard-coded colors. In `components`, use the `light` or `dark` variant matching the active dashboard theme; properties outside those variants apply in both themes.
 
 | UI role | Light mode | Dark mode |
 | --- | --- | --- |
