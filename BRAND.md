@@ -84,10 +84,10 @@ The files below are the canonical logo assets. **`dark` means for use on a dark 
 
 | Asset | Use |
 | --- | --- |
-| [`assets/brand/cuebik-full-logo-dark.svg`](assets/brand/cuebik-full-logo-dark.svg) | Full logo on black/dark surfaces |
-| [`assets/brand/cuebik-full-logo-light.svg`](assets/brand/cuebik-full-logo-light.svg) | Full logo on off-white/light surfaces |
-| [`assets/brand/cuebik-symbol-dark.svg`](assets/brand/cuebik-symbol-dark.svg) | Compact icon on dark surfaces |
-| [`assets/brand/cuebik-symbol-light.svg`](assets/brand/cuebik-symbol-light.svg) | Compact icon on light surfaces |
+| [`assets/brand/wordmark/cuebik-full-logo-dark.svg`](assets/brand/wordmark/cuebik-full-logo-dark.svg) | Full logo on black/dark surfaces |
+| [`assets/brand/wordmark/cuebik-full-logo-light.svg`](assets/brand/wordmark/cuebik-full-logo-light.svg) | Full logo on off-white/light surfaces |
+| [`assets/brand/mark/cuebik-symbol-dark.svg`](assets/brand/mark/cuebik-symbol-dark.svg) | Compact icon on dark surfaces |
+| [`assets/brand/mark/cuebik-symbol-light.svg`](assets/brand/mark/cuebik-symbol-light.svg) | Compact icon on light surfaces |
 
 **Logo rules**
 
@@ -158,10 +158,12 @@ cuebik/
 ├── DESIGN.md
 └── assets/
     └── brand/
-        ├── cuebik-symbol-dark.svg
-        ├── cuebik-symbol-light.svg
-        ├── cuebik-full-logo-dark.svg
-        └── cuebik-full-logo-light.svg
+        ├── mark/
+        │   ├── cuebik-symbol-dark.svg
+        │   └── cuebik-symbol-light.svg
+        └── wordmark/
+            ├── cuebik-full-logo-dark.svg
+            └── cuebik-full-logo-light.svg
 ```
 
 - **`BRAND.md`** controls brand identity: names, messaging, logos, colors, typography, and overall visual direction.
