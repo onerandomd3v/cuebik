@@ -15,7 +15,7 @@ This file is the **source of truth for Cuebik's brand identity**. Contributors a
 | Product name | **Cuebik** |
 | Logo wordmark | **cuebik.** — lowercase, with a yellow final period |
 | Product category | Agentic AI Banking Product Recommendation Platform |
-| Tagline | **The Right Product. The Right Customer. The Right Moment.** |
+| Tagline | **Make every recommendation count.** |
 | Logo concept | **Timed Cube** — geometric cube with a segmented, partial timing arc |
 | Primary audience | Banks and financial institutions |
 | End users | Banking customers receiving recommendations |
@@ -142,7 +142,7 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Policy & Autonomy Engine** | Enforces bank-defined automatic delivery, review, and suppression controls |
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
 
-**Preferred messaging:** “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “The right product at the right moment.”
+**Preferred messaging:** “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Make every recommendation count.”
 
 **Avoid:** Claims of perfect accuracy, guaranteed customer outcomes, unrestricted AI control, or real bank deployments and partnerships that have not been demonstrated. Include privacy, permission, and regulatory detail where the context requires it, rather than in every headline.
 
