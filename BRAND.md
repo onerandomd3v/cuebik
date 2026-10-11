@@ -1,6 +1,6 @@
 # Cuebik — Brand Guidelines
 
-**Version:** 1.3  
+**Version:** 1.3.1  
 **Updated:** 11 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
@@ -139,7 +139,7 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Customer Intelligence Layer** | Organizes customer financial and app-behaviour information into useful profiles |
 | **Recommendation Engine** | Determines which financial products best match individual customers, or returns no suitable match |
 | **Central AI Agent** | Coordinates whether, when, and how to engage customers |
-| **Policy & Autonomy Engine** | Enforces bank-defined automatic delivery, review, and suppression controls |
+| **Policy & Autonomy Engine** | Enforces bank-defined automation, human review, and engagement withholding controls |
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
 | **Organization Workspace** | A bank-specific workspace where authorized employees monitor recommendations, manage team access, and control engagement |
 
