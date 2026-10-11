@@ -1,6 +1,6 @@
 # Cuebik — Brand Guidelines
 
-**Version:** 1.2  
+**Version:** 1.3  
 **Updated:** 11 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
@@ -14,7 +14,7 @@ This file is the **source of truth for Cuebik's brand identity**. Contributors a
 | --- | --- |
 | Product name | **Cuebik** |
 | Logo wordmark | **cuebik.** — lowercase, with a yellow final period |
-| Product category | Agentic AI Banking Product Recommendation Platform |
+| Product category | **Banking Intelligence & Engagement Platform** |
 | Tagline | **Make every recommendation count.** |
 | Logo concept | **Timed Cube** — geometric cube with a segmented, partial timing arc |
 | Primary audience | Banks and financial institutions |
@@ -22,11 +22,11 @@ This file is the **source of truth for Cuebik's brand identity**. Contributors a
 
 ### Official product definition
 
-> Cuebik is an agentic AI banking platform that analyzes customer financial behaviour, banking activity, and individual interests to recommend relevant financial products and coordinate personalized engagement across banking channels. Banks connect their existing systems to Cuebik and use dedicated organization workspaces to monitor recommendations, manage team access, and control whether engagement is automatic, requires approval, or is withheld.
+> Cuebik is a banking intelligence and engagement platform that analyzes customer financial behaviour, banking activity, and individual interests to recommend relevant financial products and coordinate personalized engagement through existing banking channels. Its agentic AI system matches products, coordinates engagement, and follows bank-defined controls. Banks connect their existing systems to Cuebik and use dedicated organization workspaces to monitor recommendations, manage team access, and determine which engagements are automatic, require approval, or are withheld.
 
 Use this definition verbatim when the official full description is required. For shorter placements, use:
 
-> Cuebik helps banks understand their customers, recommend relevant financial products, and automate personalized engagement under bank-defined controls.
+> Cuebik is a banking intelligence and engagement platform that helps banks understand their customers, recommend relevant financial products, and automate personalized engagement through their existing banking channels.
 
 **Brand idea:** Structured intelligence acting at the right moment.
 
@@ -143,7 +143,7 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
 | **Organization Workspace** | A bank-specific workspace where authorized employees monitor recommendations, manage team access, and control engagement |
 
-**Preferred messaging:** “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Banks stay in control.” “Make every recommendation count.”
+**Preferred messaging:** “Banking intelligence and engagement.” “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Banks stay in control.” “Make every recommendation count.”
 
 **Avoid:** Generic technology-first claims, claims of perfect accuracy, guaranteed customer outcomes, unrestricted AI control, or real bank deployments and partnerships that have not been demonstrated. Include privacy, permission, and regulatory detail where the context requires it, rather than in every headline.
 
