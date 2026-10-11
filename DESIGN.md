@@ -1,5 +1,5 @@
 ---
-version: "1.2"
+version: "1.3"
 name: "Cuebik Interface Design System"
 description: "Desktop banking workspace and responsive public website"
 colors:
@@ -104,12 +104,14 @@ components:
 
 # Cuebik — Interface Design System
 
-**Version:** 1.2  
+**Version:** 1.3  
 **Applies to:** Bank-facing dashboard and public landing page.
 
 ## Overview
 
 **Authority:** Read `BRAND.md` first for the approved logo assets, brand colors, typefaces, and messaging. This file governs UI implementation; it does **not** define product features, AI logic, permissions, or APIs. If brand rules conflict, `BRAND.md` wins.
+
+**Product context:** Cuebik is a Banking Intelligence & Engagement Platform for banks. Use `BRAND.md` for the authoritative product description.
 
 **Visual direction:** Minimal, precise, high-contrast SaaS UI; generous whitespace, restrained yellow accents, realistic data displays. Prefer clarity and operational control over decoration.
 
