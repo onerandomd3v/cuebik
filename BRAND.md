@@ -1,7 +1,7 @@
 # Cuebik — Brand Guidelines
 
-**Version:** 1.1  
-**Updated:** 10 October 2026  
+**Version:** 1.2  
+**Updated:** 11 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
 This file is the **source of truth for Cuebik's brand identity**. Contributors and coding agents should follow its naming, colors, typography, logo, and messaging rules. Interface-level specifications belong in Cuebik's separate `DESIGN.md`.
@@ -18,15 +18,15 @@ This file is the **source of truth for Cuebik's brand identity**. Contributors a
 | Tagline | **Make every recommendation count.** |
 | Logo concept | **Timed Cube** — geometric cube with a segmented, partial timing arc |
 | Primary audience | Banks and financial institutions |
-| End users | Banking customers receiving recommendations |
+| Product users | Authorized bank staff work in organization workspaces; banking customers receive recommendations through their bank’s channels |
 
 ### Official product definition
 
-> Cuebik is an agentic AI banking platform that analyzes customer financial behaviour, banking activities and individual interests to recommend relevant financial products and automates personalized engagement across multiple channels.
+> Cuebik is an agentic AI banking platform that analyzes customer financial behaviour, banking activity, and individual interests to recommend relevant financial products and coordinate personalized engagement across banking channels. Banks connect their existing systems to Cuebik and use dedicated organization workspaces to monitor recommendations, manage team access, and control whether engagement is automatic, requires approval, or is withheld.
 
 Use this definition verbatim when the official full description is required. For shorter placements, use:
 
-> Cuebik helps banks match customers with relevant financial products and automate personalized engagement.
+> Cuebik helps banks understand their customers, recommend relevant financial products, and automate personalized engagement under bank-defined controls.
 
 **Brand idea:** Structured intelligence acting at the right moment.
 
@@ -119,9 +119,9 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 
 **Landing page:** A bold near-black hero, large off-white typography, restrained yellow highlights, and realistic product previews. The overall experience is minimal and product-led.
 
-**Internal banking dashboard:** Light-first, with an off-white page canvas, white content panels, readable dark text, and a coordinated dark mode. Prioritize clear analytics, agent activity, recommendation insights, and approvals over decorative branding.
+**Internal banking dashboard:** Light-first, with an off-white page canvas, white content panels, readable dark text, and a coordinated dark mode. Each bank's authorized team uses its own organization workspace for insights, agent activity, recommendations, approvals, and controls. Prioritize clarity over decorative branding.
 
-**Banking customer experience:** Personal recommendations should feel native to the host bank's application. Follow the partner bank’s approved branding requirements; do not make Cuebik look like the bank itself.
+**Banking customer experience:** Cuebik handles recommendation intelligence through connections with existing bank systems. Customers see approved outcomes within their bank's applications and channels. Follow the bank's branding requirements; do not make Cuebik look like the bank itself.
 
 **Pitch decks and marketing:** Use the full logo prominently on covers, clear product messaging, high-contrast layouts, and selective yellow accents. Use diagrams or product mockups instead of dense paragraphs.
 
@@ -141,10 +141,11 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Central AI Agent** | Coordinates whether, when, and how to engage customers |
 | **Policy & Autonomy Engine** | Enforces bank-defined automatic delivery, review, and suppression controls |
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
+| **Organization Workspace** | A bank-specific workspace where authorized employees monitor recommendations, manage team access, and control engagement |
 
-**Preferred messaging:** “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Make every recommendation count.”
+**Preferred messaging:** “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Banks stay in control.” “Make every recommendation count.”
 
-**Avoid:** Claims of perfect accuracy, guaranteed customer outcomes, unrestricted AI control, or real bank deployments and partnerships that have not been demonstrated. Include privacy, permission, and regulatory detail where the context requires it, rather than in every headline.
+**Avoid:** Generic technology-first claims, claims of perfect accuracy, guaranteed customer outcomes, unrestricted AI control, or real bank deployments and partnerships that have not been demonstrated. Include privacy, permission, and regulatory detail where the context requires it, rather than in every headline.
 
 ---
 
