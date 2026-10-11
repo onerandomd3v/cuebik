@@ -1,5 +1,5 @@
 ---
-version: "1.1"
+version: "1.3"
 name: "Cuebik Interface Design System"
 description: "Desktop banking workspace and responsive public website"
 colors:
@@ -104,16 +104,18 @@ components:
 
 # Cuebik — Interface Design System
 
-**Version:** 1.1  
+**Version:** 1.3  
 **Applies to:** Bank-facing dashboard and public landing page.
 
 ## Overview
 
 **Authority:** Read `BRAND.md` first for the approved logo assets, brand colors, typefaces, and messaging. This file governs UI implementation; it does **not** define product features, AI logic, permissions, or APIs. If brand rules conflict, `BRAND.md` wins.
 
+**Product context:** Cuebik is a Banking Intelligence & Engagement Platform for banks. Use `BRAND.md` for the authoritative product description.
+
 **Visual direction:** Minimal, precise, high-contrast SaaS UI; generous whitespace, restrained yellow accents, realistic data displays. Prefer clarity and operational control over decoration.
 
-- **Banking dashboard:** Desktop-only product, light theme by default with a complete dark theme. Target **1200 CSS px and wider**; use desktop interaction patterns, not mobile navigation.
+- **Banking dashboard:** Desktop-only organization workspace for authorized bank staff, light theme by default with a complete dark theme. Target **1200 CSS px and wider**; use desktop interaction patterns, not mobile navigation.
 - **Landing page:** Fully responsive from **320 CSS px** upwards; near-black hero, off-white typography, yellow accents, realistic product previews.
 - **Bank-customer interface:** Not specified here. It should follow the host bank's design system, not the internal Cuebik dashboard styles.
 
@@ -144,7 +146,7 @@ Use the front-matter tokens as canonical UI values. They implement the core pale
 
 ## Layout
 
-**Dashboard shell:** Persistent left sidebar **240px**, top bar **64px**, main-content gutters **24px** (compact) / **32px** (wide), and **24px** typical card gaps. Keep the sidebar and primary navigation stable. Use a fixed or capped reading width for text-heavy panels; let data tables take the width they need.
+**Dashboard shell:** Persistent left sidebar **240px**, top bar **64px**, main-content gutters **24px** (compact) / **32px** (wide), and **24px** typical card gaps. Show the active bank organization and account access in the header; show an organization switcher only for users belonging to multiple organizations. Keep navigation stable. Use a capped reading width for text-heavy panels; let data tables take the width they need.
 
 **Dashboard widths:**
 
@@ -154,9 +156,9 @@ Use the front-matter tokens as canonical UI values. They implement the core pale
 | 1440px+ | Standard/wide desktop: 32px gutters, more data columns where useful. |
 | Below 1200px | **No mobile dashboard layout.** Show a desktop-optimized notice. Do not silently remove controls or use device detection; keep essential content usable when the viewport narrows due to browser zoom. |
 
-**Dashboard navigation:** Overview · Customers · Recommendations · AI Agent Activity · Approvals · Engagement · Policies & Automation. Treat these as screen labels, not a promise of implemented capabilities.
+**Dashboard navigation:** Overview · Customers · Recommendations · AI Agent Activity · Approvals · Engagement · Policies & Automation. Offer organization settings and member management through a clear account/settings entry point. These are screen labels, not promises of implemented capabilities.
 
-**Landing page:** Mobile **320–639px** (stacked layout and mobile navigation); tablet **640–1023px** (selective two-column layout); desktop **1024px+** (full navigation and editorial grids). No global horizontal overflow. Landing-page breakpoints must not inherit the dashboard restriction.
+**Landing page:** Mobile **320–639px** (stacked layout and mobile navigation); tablet **640–1023px** (selective two-column layout); desktop **1024px+** (full navigation and editorial grids). Primary CTA: **Get started** (account and organization onboarding); offer **Sign in** for existing bank team members and **How it works** as a secondary action. Show the demonstration banking app as a separate customer-experience preview, not Cuebik's core product. No global horizontal overflow. Landing-page breakpoints must not inherit the dashboard restriction.
 
 ## Elevation & Depth
 
@@ -168,10 +170,10 @@ Use the documented corner-radius tokens: `sm` for inputs/buttons, `md` for cards
 
 ## Components
 
-- **Buttons and forms:** One primary action per context; secondary actions are neutral. Inputs have persistent labels, visible keyboard focus, inline errors, and clear disabled/loading states. Destructive or consequential actions require confirmation.
+- **Buttons and forms:** One primary action per context; secondary actions are neutral. Inputs have persistent labels, visible keyboard focus, inline errors, and clear disabled/loading states. Destructive or consequential actions require confirmation. Apply these patterns to sign-in, registration, organization setup, and invitations, including visible progress and error states; do not invent authentication rules.
 - **Tables:** Filter and sort controls above the data; readable headers, stable row actions, pagination, empty/loading/error states. Wide tables scroll **inside the table container**. Never conceal full identifiers without an accessible way to inspect them.
 - **Cards and charts:** Cards summarize a decision or metric, including its time range. Charts must have labels, units, a time range, and an accessible textual equivalent. Do not invent metrics or display synthetic data as live results.
-- **Details and review:** Use a detail panel/page for supporting evidence; dialogs for final confirmation. Approval decisions must make the action and its consequences explicit.
+- **Details and review:** Use a detail panel/page for supporting evidence; dialogs for final confirmation. Approval decisions must make the action and its consequences explicit. Display the current organization and permitted actions clearly; avoid controls that imply unavailable permissions.
 - **Recommendation UI:** Display **product match + rationale + next step**. Separate the recommendation engine's **WHAT**, the agent's **WHETHER/WHEN/HOW**, and the bank's **AUTOMATE/REVIEW/WITHHOLD** decision. An unsuitable match is a valid outcome, not an error.
 - **Decision versus delivery status:** `Recommend`, `Clarify`, `Suppress` describe decision outcomes. `Proposed`, `Pending review`, `Approved`, `Sent`, `Delivered`, `Withheld`, `Failed` describe workflow execution. **Never imply `Recommended = Sent` or `Approved = Delivered`.** Show timestamps and actors when available.
 - **Shared dashboard screens:** Overview = attention and activity; Customers = profiles and interests; Recommendations = match evidence; AI Agent Activity = decision timeline; Approvals = review queue; Engagement = channel/message outcomes; Policies & Automation = bank-controlled rule settings. Use only controls supported by the product specification.

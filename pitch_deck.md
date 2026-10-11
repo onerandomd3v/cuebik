@@ -10,7 +10,7 @@
 
 ### Make every recommendation count.
 
-**Agentic AI Banking Product Recommendation Platform**
+**Banking Intelligence & Engagement Platform**
 
 Intelligent product matching and automated personalized customer engagement.
 
@@ -68,7 +68,7 @@ Bridge the gap between what customers need and what banks recommend through inte
 
 # Introducing Cuebik.
 
-Cuebik is an agentic AI banking platform that analyzes customer financial behaviour, banking activities and individual interests to recommend relevant financial products and automates personalized engagement across multiple channels.
+Cuebik is a banking intelligence and engagement platform that helps banks understand their customers, recommend relevant financial products, and automate personalized engagement through their existing banking channels. Banks connect their existing systems to Cuebik and manage recommendations through dedicated organization workspaces, with bank-defined engagement controls.
 
 ### What Cuebik Does
 
@@ -90,7 +90,7 @@ Connects with customers through banking apps, email, SMS and WhatsApp.
 
 **Empowers Banking Teams**
 
-Provides customer insights, recommendation analytics, AI agent monitoring and operational controls through an internal dashboard.
+Provides each bank's authorized team with its own workspace for customer insights, recommendation analytics, AI agent monitoring and operational controls.
 
 **One Platform. Personalized Banking Recommendations. Intelligent Engagement.**
 
@@ -138,7 +138,11 @@ Applies bank-configured approval rules, customer communication preferences and e
 
 ### INTERNAL BANKING DASHBOARD
 
-Provides visibility into customer insights, AI agent activities, recommendations, approval workflows and engagement performance.
+Provides organization-based workspaces for customer insights, AI agent activity, recommendations, approval workflows and engagement performance.
+
+**BANK SYSTEM INTEGRATION**
+
+Banks share permitted customer and product information with Cuebik through backend integrations. Cuebik performs matching and orchestration; banking apps and channels present approved outcomes and return customer feedback.
 
 ---
 
@@ -156,12 +160,13 @@ Provides visibility into customer insights, AI agent activities, recommendations
 - Clear explanations of why products are recommended.
 - Easy access to product benefits and information.
 - Customer feedback and recommendation preferences.
-- Personalized engagement across multiple channels.
+- Personalized engagement across multiple channels within the bank's existing customer experience.
 
 ### FOR BANKING TEAMS
 
 **Cuebik AI Customer Intelligence Dashboard**
 
+- Organization-based access for authorized bank employees.
 - Dynamic customer segments and financial interests.
 - Personalized product recommendation insights.
 - AI agent activity and decision monitoring.
@@ -227,11 +232,11 @@ Banks configure which recommendations the AI agent can automatically deliver and
 
 - Synthetic customer financial and behavioural datasets.
 - Customer intelligence and dynamic multi-interest profiling.
-- AI/ML-powered banking product recommendation engine.
+- AI/ML recommendation engine for banking product matching.
 - Central AI agent for intelligent engagement orchestration.
 - Configurable recommendation automation and approval workflows.
-- Customer-facing banking recommendation experience.
-- Internal AI customer intelligence dashboard.
+- Demonstration banking app for customer recommendations and feedback, using synthetic data.
+- Internal AI customer intelligence dashboard with organization accounts and team roles.
 
 ### THREE DEMONSTRATION SCENARIOS
 
@@ -249,7 +254,7 @@ Cuebik recognizes when a recommendation is inappropriate or unnecessary and with
 
 ### BUILT FOR SCALABILITY
 
-Designed to integrate with existing banking systems through APIs, configurable product catalogues and reusable customer engagement services.
+Designed to connect to existing banking backends through APIs, configurable product catalogues and reusable engagement services. Recommendation intelligence remains in Cuebik; bank applications display approved outcomes and relay customer interactions.
 
 **Our Objective: Demonstrate Intelligent, Personalized and Automated Banking Product Recommendations.**
 
@@ -259,7 +264,7 @@ Designed to integrate with existing banking systems through APIs, configurable p
 
 # Cuebik. Making Banking Engagement More Intelligent, Personal and Effective.
 
-Cuebik is designed to help banks move beyond generic product promotions toward intelligent product matching and personalized customer engagement.
+Cuebik brings banking intelligence and engagement into one platform, helping banks move beyond generic product promotions toward relevant product matching and personalized customer engagement.
 
 ### OUR TEAM
 
