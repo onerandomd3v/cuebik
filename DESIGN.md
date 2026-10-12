@@ -1,5 +1,5 @@
 ---
-version: "1.3"
+version: "1.4"
 name: "Cuebik Interface Design System"
 description: "Desktop banking workspace and responsive public website"
 colors:
@@ -104,7 +104,7 @@ components:
 
 # Cuebik — Interface Design System
 
-**Version:** 1.3  
+**Version:** 1.4  
 **Applies to:** Bank-facing dashboard and public landing page.
 
 ## Overview
@@ -146,7 +146,7 @@ Use the front-matter tokens as canonical UI values. They implement the core pale
 
 ## Layout
 
-**Dashboard shell:** Persistent left sidebar **240px**, top bar **64px**, main-content gutters **24px** (compact) / **32px** (wide), and **24px** typical card gaps. Show the active bank organization and account access in the header; show an organization switcher only for users belonging to multiple organizations. Keep navigation stable. Use a capped reading width for text-heavy panels; let data tables take the width they need.
+**Dashboard shell:** Persistent left sidebar **240px**, top bar **64px**, main-content gutters **24px** (compact) / **32px** (wide), and **24px** typical card gaps. Show the active bank organization and account access in the header; do not display an organization switcher in the current single-organization employee experience; introduce one only if multi-organization membership becomes an approved product capability. Keep navigation stable. Use a capped reading width for text-heavy panels; let data tables take the width they need.
 
 **Dashboard widths:**
 
@@ -156,7 +156,7 @@ Use the front-matter tokens as canonical UI values. They implement the core pale
 | 1440px+ | Standard/wide desktop: 32px gutters, more data columns where useful. |
 | Below 1200px | **No mobile dashboard layout.** Show a desktop-optimized notice. Do not silently remove controls or use device detection; keep essential content usable when the viewport narrows due to browser zoom. |
 
-**Dashboard navigation:** Overview · Customers · Recommendations · AI Agent Activity · Approvals · Engagement · Policies & Automation. Offer organization settings and member management through a clear account/settings entry point. These are screen labels, not promises of implemented capabilities.
+**Dashboard navigation:** Overview · Customers · Products & Catalog · Recommendations · Agent Activity · Approvals · Engagement · Policies & Automation. Organization Settings contains Team Members & Access and a nested Integrations entry. These are screen labels, not promises of implemented capabilities.
 
 **Landing page:** Mobile **320–639px** (stacked layout and mobile navigation); tablet **640–1023px** (selective two-column layout); desktop **1024px+** (full navigation and editorial grids). Primary CTA: **Get started** (account and organization onboarding); offer **Sign in** for existing bank team members and **How it works** as a secondary action. Show the demonstration banking app as a separate customer-experience preview, not Cuebik's core product. No global horizontal overflow. Landing-page breakpoints must not inherit the dashboard restriction.
 
@@ -176,7 +176,7 @@ Use the documented corner-radius tokens: `sm` for inputs/buttons, `md` for cards
 - **Details and review:** Use a detail panel/page for supporting evidence; dialogs for final confirmation. Approval decisions must make the action and its consequences explicit. Display the current organization and permitted actions clearly; avoid controls that imply unavailable permissions.
 - **Recommendation UI:** Display **product match + rationale + next step**. Separate the recommendation engine's **WHAT**, the agent's **WHETHER/WHEN/HOW**, and the bank's **AUTOMATE/REVIEW/WITHHOLD** decision. An unsuitable match is a valid outcome, not an error.
 - **Decision versus delivery status:** `Recommend`, `Clarify`, `Suppress` describe decision outcomes. `Proposed`, `Pending review`, `Approved`, `Sent`, `Delivered`, `Withheld`, `Failed` describe workflow execution. **Never imply `Recommended = Sent` or `Approved = Delivered`.** Show timestamps and actors when available.
-- **Shared dashboard screens:** Overview = attention and activity; Customers = profiles and interests; Recommendations = match evidence; AI Agent Activity = decision timeline; Approvals = review queue; Engagement = channel/message outcomes; Policies & Automation = bank-controlled rule settings. Use only controls supported by the product specification.
+- **Shared dashboard screens:** Overview = attention and activity; Customers = profiles and interests; Products & Catalog = bank offerings and eligibility definitions; Recommendations = match evidence; Agent Activity = orchestration status and decision history; Approvals = review queue; Engagement = channel/message outcomes; Policies & Automation = bank-controlled rule settings; Integrations = authorized bank-system connections; Organization Settings = workspace and authorized access. Use only controls supported by `PRODUCT.md`.
 
 ## Do's and Don'ts
 
