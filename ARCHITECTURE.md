@@ -215,7 +215,7 @@ Applications retain independent builds and deployments. Core modules share autho
 
 ## 4. Intelligence and execution design rules
 
-The selected backend language and framework are recorded in [`1](#1-technology-decisions-and-open-evaluations); deployable ownership is defined in [`2](#2-approved-application-and-service-boundaries). The following rules specify **how the distinct Python workloads cooperate**, without repeating the technology matrix.
+The selected backend language and framework are recorded in [§1](#1-technology-decisions-and-open-evaluations); deployable ownership is defined in [§2](#2-approved-application-and-service-boundaries). The following rules specify **how the distinct Python workloads cooperate**, without repeating the technology matrix.
 
 - **Customer Intelligence and Recommendation Engine (`apps/backend/intelligence`):** Transform permitted bank-scoped signals into evidence with provenance and freshness, check active catalog eligibility **before** relevance scoring, and return structured **Recommend / Clarify / Suppress** outcomes with evaluation and product versions. An explainable baseline comes first; learned ranking requires representative labels and measured improvement. A synthetic dataset does not prove real-world model performance.
 - **Central Agent (`apps/backend/agent`):** Consume an authorized recommendation result, propose whether, when, and how to engage, and return a validated, explainable proposal through the Core API. Optional language-model calls go **only through the Model Gateway**; no LLM output is approval or dispatch permission.
@@ -280,12 +280,12 @@ External inference changes where bank-derived data is processed. Apply data mini
 
 ## 6. Implementation decisions still open
 
-The **approved technologies and their reasons** are maintained in [`1](#1-technology-decisions-and-open-evaluations); no additional stack is implied by these unresolved tasks. Contributors must not present pending choices or unimplemented integrations as operational.
+The **approved technologies and their reasons** are maintained in [§1](#1-technology-decisions-and-open-evaluations); no additional stack is implied by these unresolved tasks. Contributors must not present pending choices or unimplemented integrations as operational.
 
 1. **Workflow reliability:** Define Temporal Workflow/Activity boundaries, human approval signals, cancellation, timeout/retry policies, idempotency, transactional outbox/reconciliation and the pre-dispatch authorization boundary. Validate Temporal Cloud region, retention, pricing and separately hosted Python workers.
-2. **Simulator contracts:** Finalize the bank-scoped synthetic event schema, demo-customer authentication, approved inbox records, per-channel acknowledgements, feedback provenance and duplicate-event handling. Acceptance scenarios are specified in [`2.5](#25-integration-acceptance-checks).
+2. **Simulator contracts:** Finalize the bank-scoped synthetic event schema, demo-customer authentication, approved inbox records, per-channel acknowledgements, feedback provenance and duplicate-event handling. Acceptance scenarios are specified in [§2.5](#25-integration-acceptance-checks).
 3. **Intelligence and agent evaluation:** Choose the feature-processing and ranking baseline; evaluate evidence quality and candidate ML tooling. Test gpt-oss and Qwen via hosted providers using Cuebik-specific accuracy, schema, latency, privacy and cost criteria before selecting active models and fallback behavior.
 4. **Authentication and service boundaries:** Specify employee sessions, credentials, authorization roles and MFA needs; define versioned inter-service contracts, tenant isolation, data ownership and audit records.
 5. **Infrastructure and operations:** Select hosting/regions for Next.js apps, Core API, intelligence and workers, plus managed PostgreSQL. Specify secrets, backups, tracing storage, recovery procedures, operational alerts and measurable service objectives.
 
-**Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [`3](#3-approved-monorepo-organization).
+**Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
