@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.3.0  
+**Version:** 0.4.0  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -37,9 +37,9 @@ The team has approved several technologies and architectural directions. Remaini
 
 Decisions must be evaluated as a system: Temporal orchestration must coordinate safely with PostgreSQL business state; LLM results must not bypass policy enforcement; the banking PWA must not fabricate engagement delivery.
 
-## 2. Proposed application and service boundaries
+## 2. Approved application and service boundaries
 
-The product has three client experiences and several distinct platform responsibilities. Cuebik should support independently deployable applications **without treating every product module as an independent microservice**. Organization-scoped authorizations, catalog versions, policy evaluation, approvals, and engagement state require a shared transactional authority.
+The product has three independently deployable Next.js web experiences—marketing, staff dashboard and customer banking simulator—and several independently runnable backend responsibilities. **The banking PWA is a virtual smartphone with Banking App, SMS and Email views, rather than three real delivery providers or a native Android application.** Independently deployable applications do not require each business module to become a microservice. Organization-scoped authorizations, product/policy versions, approvals and engagement states require a shared transactional authority.
 
 ### 2.1 Editable service diagram
 
@@ -84,7 +84,7 @@ flowchart TB
 
 **Important boundaries:**
 - The public website is separate from the authenticated operational dashboard; it does not need customer data access.
-- The installable banking PWA portrays a fictional bank customer experience, not a mobile staff dashboard. It requires customer-scoped access; seeded bank data must not replace Core API-backed recommendations and feedback.
+- The installable banking PWA portrays a fictional Harbourline Bank customer experience, not a mobile staff dashboard. It requires customer-scoped access; seeded bank data must not replace Core API-backed recommendations and feedback. On desktop, a centered phone shell contains Banking App, SMS, Email and Notifications views; on real mobile screens the simulator uses the mobile viewport without a second phone frame.
 - The Core Platform API owns authorized transactional state and applies final authorization. External compute services cannot directly grant approvals or send engagements on their own.
 - The Recommendation Service returns structured **Recommend / Clarify / Suppress** decisions and evidence. It does not own approval, policy or delivery records.
 - The Agent Worker proposes **whether/when/how**. The Engagement Worker handles scheduled handoffs and feedback, but must revalidate current permissions and policy before external delivery.
@@ -97,7 +97,7 @@ flowchart TB
 | --- | --- | --- |
 | **Marketing website** | Independent web application and deployment | Content, SEO, caching and release cadence differ from internal banking operations. |
 | **Banking dashboard** | Independent authenticated web application and deployment | Bank staff need rich, secured operations independent of public site releases. |
-| **Banking PWA** | Independent installable Next.js web application | Demonstrates customer notifications and feedback without a native Android build; scoped API ensures only approved offers appear. |
+| **Banking PWA** | Independent installable Next.js web application | Hosts one virtual smartphone with simulated Banking App, SMS, Email, and Notifications views; customer-scoped API supplies only authorized messages and records feedback. |
 | **Core Platform API** | Independent backend deployment | Owns authoritative bank-scoped data and consequential policy/approval/engagement transitions. |
 | **Intelligence & Recommendation Service** | Independently testable Python service; separate deployment candidate | Feature processing and ML evaluation may require independent resources and model release cycles. |
 | **Agent orchestration** | Separate worker runtime; independent deployment if justified | Planning and optional language inference should not block interactive requests. |
@@ -108,6 +108,78 @@ flowchart TB
 **A folder is not automatically a standalone service.** Meaningful independence requires an explicit contract, build/test configuration, well-defined data ownership and operational responsibility. No independent service may use another service's private database tables as an undocumented API.
 
 The Core API must preserve references to input evidence, product versions, policy versions, authorization decisions and status events. A scheduled or retried job must not send a message under stale consent, approval or product terms. Temporal Activity boundaries, outbox/locking, cancellation and idempotency still require detailed design. Temporal does not replace PostgreSQL as the authoritative business record.
+
+### 2.3 Virtual smartphone simulator and Cuebik: end-to-end flow
+
+**Accepted integration concept:** The separately deployed banking PWA and the Cuebik banking dashboard operate against the **same Core API-backed, bank-scoped synthetic dataset and event history**. The PWA is an authorized test source and a simulation of the bank's three permitted customer channels; it is **not** an actual banking core, SMS carrier, external mailbox or official bank mobile application.
+
+The following diagram reproduces the agreed **customer action → Cuebik intelligence → governed engagement → customer inbox → feedback → dashboard** sequence in editable, GitHub-rendered Mermaid. Branching makes explicit that **Clarify**, **Suppress**, **Withhold**, and rejected reviews do not create an outbound message.
+
+```mermaid
+flowchart TD
+    PHONE["Virtual smartphone PWA<br/>Fictional Harbourline Bank"] --> ACTION["Customer performs a synthetic banking action"]
+    ACTION --> EVENT["Core API validates, scopes and records<br/>a source-labeled synthetic financial event"]
+    EVENT --> INTEL["Customer Intelligence + Recommendation Engine"]
+    INTEL --> MATCH{"Recommendation outcome?"}
+    MATCH -->|"Clarify / Suppress"| NO_SEND["Record decision and evidence<br/>No customer message"]
+    MATCH -->|"Recommend"| AGENT["Central Agent<br/>Whether, when and which permitted channel"]
+    AGENT --> POLICY["Core API applies active bank policy"]
+    POLICY --> GATE{"Policy outcome?"}
+    GATE -->|"Withhold"| BLOCK["Record Withheld<br/>No customer message"]
+    GATE -->|"Review"| REVIEW["Authorized bank reviewer<br/>Approve or reject exact message"]
+    REVIEW -->|"Rejected / expired"| STOP["Record review outcome<br/>No customer message"]
+    REVIEW -->|"Approved"| TEMP["Temporal engagement workflow<br/>Schedule, retry, recover"]
+    GATE -->|"Automate"| TEMP
+    TEMP --> CHECK["Core API rechecks consent, product terms,<br/>channel, policy and authorization"]
+    CHECK -->|"Invalid"| NO_DISPATCH["Record blocked / failed attempt<br/>No customer message"]
+    CHECK -->|"Valid"| ROUTE{"Selected simulation channel"}
+    ROUTE -->|"Banking App"| BANK["Banking App inbox item"]
+    ROUTE -->|"SMS"| SMS["Simulated SMS inbox item"]
+    ROUTE -->|"Email"| EMAIL["Simulated Email inbox item"]
+    BANK --> FEEDBACK["Customer views or interacts<br/>Evidenced feedback event"]
+    SMS --> FEEDBACK
+    EMAIL --> FEEDBACK
+    FEEDBACK --> CORE["Core API records feedback and<br/>engagement lifecycle"]
+    CORE --> DASH["Cuebik bank dashboard<br/>Same recorded event history"]
+    NO_SEND --> DASH
+    BLOCK --> DASH
+    STOP --> DASH
+    NO_DISPATCH --> DASH
+```
+
+The chosen channel is **one branch per authorized engagement**, not a broadcast to all three inboxes. Multiple channels require independent justified and authorized engagements. The simulator must not generate an inbox item for suppressed, withheld, rejected, expired or otherwise unauthorized engagement proposals.
+
+### 2.4 Simulator runtime and contract boundaries
+
+| Boundary | Responsibilities | Reason / invariant |
+| --- | --- | --- |
+| **PWA UI (apps/web/banking-pwa)** | Desktop centered phone shell; mobile full-viewport UI; simulated Banking App, SMS, Email and Notifications; customer demo interactions. | One installable web app, not an emulated Android OS or three external message services. |
+| **Synthetic financial event** | Customer-demo session triggers a permitted fictional savings/deposit/transfer-like action; server validates the scenario and records source, bank/customer scope, event ID, timestamp and provenance. | Reproducible, isolated event inputs for intelligence; no real funds, bank credentials or payment instructions. |
+| **Intelligence and agent** | Authorized event data updates appropriate customer features; product matching returns Recommend / Clarify / Suppress; agent proposes a permitted message channel and time. | A synthetic event does not guarantee a product recommendation or contact. |
+| **Core policy and approval** | Validate active product/catalog terms, consent and permission, deterministic Automate / Review / Withhold, and exact-message approval where required. | Cuebik remains the authority for contact; the PWA never approves its own engagement. |
+| **Temporal and simulation adapter** | Durable scheduled work; final authorization/eligibility recheck; per-channel **simulated** dispatch; idempotent creation of a backend inbox record. | A workflow step or API enqueue alone is not proof that a real message was sent or delivered. |
+| **PWA inbox queries** | Fetch customer-scoped simulated items for the selected Banking App, SMS or Email screen; optionally show an in-simulator notification. | The inbox content comes from authoritative backend records, not frontend hardcoded offers. |
+| **Feedback API and dashboard** | Record evidenced opens, dismissals, product-detail requests or other supported events against the exact engagement, then display corresponding history in the bank dashboard. | Distinguish queued, simulated sent, simulated delivered/available, viewed and clicked; do not invent customer engagement or real provider delivery. |
+
+**Proposed logical contracts (not finalized HTTP routes or DB schemas):**
+1. **SyntheticBankEvent:** demo organization and customer reference; action kind, allowed synthetic balance/transaction change, event ID, occurred-at time, simulator provenance and idempotency key.
+2. **SimulatedEngagementDispatch:** engagement reference, authorized channel, approved message/version, expected simulated customer, scheduled time, and unique dispatch/idempotency identity.
+3. **SimulatedInboxItem:** channel, simulated recipient, source engagement, displayed body/terms, simulated adapter acknowledgement and timestamps; server-controlled, customer-readable.
+4. **CustomerInteractionEvent:** scoped customer-demo identity, source inbox item and engagement, explicit viewed/dismissed/requested-info action, client event identity and server-observed time.
+
+The Core API should authenticate the demo customer session and derive bank/customer access scope server-side, not trust arbitrary identifiers from browser input. Enforce allowed event types and reject mismatched message/engagement/customer references. The exact schemas, transport, refresh strategy, token/session mechanism, storage tables and clock/replay behavior still need specification.
+
+**Status evidence:** A successful mock adapter handoff may justify *simulated Sent*; backend inbox persistence or an explicit simulator acknowledgement may justify *simulated Delivered/Available* only under an agreed evidence contract. A real SMS/email has not been sent, and merely drawing a notification cannot count as a confirmed human view. Production-facing reports must label simulator-derived metrics as synthetic.
+
+**Visual design:** The simulator retains the fictional **Harbourline Bank** identity. Its red-led interface may be inspired by Zenith Bank's color palette, but **no official bank logo, exact proprietary screen recreation, credentials, or claim of real Zenith integration is permitted**. Cuebik's root DESIGN.md governs the marketing site and employee dashboard; the bank simulator's visual system remains separate.
+
+### 2.5 Integration acceptance checks
+
+- A synthetic banking action changes the scoped fictional customer evidence and can trigger a fresh recommendation evaluation, without real money movement or guarantees of a positive recommendation.
+- **Recommend + Review** produces no inbox item until an authorized reviewer approves the exact content. Rejection, policy Withhold, and Clarify/Suppress cases yield no contact.
+- **Recommend + Automate** may create an authorized item in **exactly the selected simulated channel**, after rechecking current terms and permissions; other inboxes remain unchanged.
+- A retry or repeated UI/API event does not duplicate the simulated inbox message; a changed permission or paused product before dispatch blocks it.
+- Opening or acting on a simulator message results in a precisely attributed, backend-persisted feedback event visible on the Cuebik dashboard. Only evidence-backed lifecycle states and explicit simulated delivery status are displayed.
 
 ## 3. Approved monorepo organization
 
@@ -215,11 +287,11 @@ External inference changes where bank-derived data is processed. Apply data mini
 
 ## 6. Confirmed decisions and remaining work
 
-**Confirmed:** PostgreSQL; Python + Django/Django Ninja for Core API; deterministic eligibility and bank policy checks; Next.js/TypeScript independently deployed marketing, dashboard and **installable banking PWA**; application-managed staff authentication; an internal Model Gateway; **hosted LLM inference initially** with gpt-oss and Qwen candidates; **Temporal durable workflows with Python workers**, local development server and Temporal Cloud intended for managed orchestration; OpenTelemetry instrumentation; and monorepo directories `apps/`, `packages/`, `infra/`, `assets/`.
+**Confirmed:** PostgreSQL; Python + Django/Django Ninja for Core API; deterministic eligibility and bank policy checks; Next.js/TypeScript independently deployed marketing, dashboard and **installable banking PWA with a virtual phone simulator and three simulated channels**; application-managed staff authentication; an internal Model Gateway; **hosted LLM inference initially** with gpt-oss and Qwen candidates; **Temporal durable workflows with Python workers**, local development server and Temporal Cloud intended for managed orchestration; OpenTelemetry instrumentation; and monorepo directories `apps/`, `packages/`, `infra/`, `assets/`.
 
-**Unresolved details that must not be presented as implemented:** Temporal Cloud account, regional suitability, pricing, usage budget, workflow histories/retry/cancellation design; worker hosting; data/permission contracts; actual model/provider selection and evaluation; ML baseline/training evidence; authentication security settings; hosting vendors; secrets, telemetry backend, recovery and SLOs.
+**Unresolved details that must not be presented as implemented:** Temporal Cloud account, regional suitability, pricing, usage budget, workflow histories/retry/cancellation design; worker hosting; exact synthetic-event and three-inbox message/feedback schemas and simulation evidence rules; data/permission contracts; actual model/provider selection and evaluation; ML baseline/training evidence; authentication security settings; hosting vendors; secrets, telemetry backend, recovery and SLOs.
 
-**Customer demo guarantee:** A PWA may use seeded account/transaction screens, but must retrieve approved recommendations via authorized API endpoints and report actual customer feedback. Approval, send, delivery and viewing remain distinct facts.
+**Customer demo guarantee:** The fictional Harbourline Bank virtual phone may use seeded account/transaction screens and permit approved synthetic financial actions, but must persist simulated source events, retrieve only authorized channel-specific messages from the Core API, and report genuine interaction feedback. Banking App, SMS and Email are three **simulated inboxes** backed by the same platform event history; there is no real SMS/email handoff. Approval, simulated sending, simulated delivery, viewing and product uptake are distinct facts.
 
 **Temporal guarantee boundary:** Temporal persists workflow progression; it does not independently authorize an engagement, make external dispatch exactly once, or replace PostgreSQL business state. Workers must verify current consent, catalog terms, policy and approval immediately before handoff and protect against retries/duplicates.
 
