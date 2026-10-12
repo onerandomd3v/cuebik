@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.7  
+**Version:** 0.4.8  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -312,10 +312,8 @@ The following product decisions are recorded in [PRODUCT.md §5](PRODUCT.md#5-fu
 - **Three initial catalog families:** Savings, fixed deposits and SME/credit, each with fictional bank-defined product terms and eligibility/exclusion rules. **SME/credit outbound recommendations require authorized human review**; an informational credit opportunity is not a lending/affordability decision.
 - **Recommendation execution:** Compute permitted, traceable features such as deposit regularity, balance trends, existing holdings and stated goals when supported by source evidence; enforce required eligibility **before** an explainable relevance rank. The first release does **not** require a trained ML ranker or GPT-OSS for matching. Unknown required evidence cannot be hallucinated or overridden by a ranking score.
 - **Internal Clarify:** Record the missing or contradictory evidence in the bank workspace; do not ask customers for more data automatically in the initial release. Reevaluate affected candidates after a validated source update and retain historical outcomes.
-- **Authorization defaults:** Start the bank in **Manual Review** mode. Controlled Automation of eligible, permitted savings or fixed-deposit engagement requires an explicitly enabled **active bank policy**. Existing restrictions, mandatory checks and credit-review requirements take precedence; no active matching rule does not imply permission to auto-dispatch.
-- **Test integrity:** Create one coherent synthetic reference dataset with independently specified expected outcomes for eligibility, ranking, Clarify/Suppress, bank reviews, authorization blocks, simulated handoff, feedback and duplicate prevention. Treat pass/fail results as **synthetic acceptance tests**, not proof of customer benefit, real-bank conversion or learned-model accuracy.
-- **CSV-only recipients:** Imported customers can generate authentic intelligence, recommendations and agent proposals without using the banking PWA. Do **not** generate a fictional inbox delivery for a customer with no linked simulated recipient. Customer communications require a configured authorized destination and supported delivery evidence.
-
+- **Authorization baseline:** Demonstrate controlled automation for eligible, permitted **savings-product** outreach only when the bank has explicitly enabled a matching active policy. Credit-related proposals and engagements requiring additional oversight use human review. Withhold when mandatory restrictions or required communication permissions are missing. Existing Manual Review and Controlled Automation modes remain available; **the initial organization-wide mode was not selected by these five proposals**. Fixed-deposit recommendations remain in the supported catalog, without treating automated fixed-deposit engagement as newly approved.
+- **Test integrity:** Create one coherent synthetic reference dataset with independently specified expected outcomes for qualifying recommendations, missing information, ineligible candidates, controlled automation, bank review, withholding and changed customer evidence. Evaluate eligibility decisions, explanations, authorization outcomes, evidenced deliveries and observed interactions. Treat pass/fail results as **synthetic acceptance tests**, not proof of customer benefit, real-bank conversion or learned-model accuracy.
 The exact example products, feature thresholds, fixture rows, error messages and test assertions are implementation/test-definition work.
 
 ## 5. Model Gateway and provider portability
