@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.8  
+**Version:** 0.4.9  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -185,6 +185,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 - **Recommend + Automate** may create an authorized item in **exactly the selected simulated channel**, after rechecking current terms and permissions; other inboxes remain unchanged.
 - A retry or repeated UI/API event does not duplicate the simulated inbox message; a changed permission or paused product before dispatch blocks it.
 - Opening or acting on a simulator message results in a precisely attributed, backend-persisted feedback event visible on the Cuebik dashboard. Only evidence-backed lifecycle states and explicit simulated delivery status are displayed.
+- **CSV-only delivery acceptance:** Every validated CSV customer can be evaluated and appear in the bank dashboard without a simulator account. If that customer has **no linked authorized simulator recipient**, the simulated adapter produces no inbox item or fictitious Sent/Delivered status; the real recommendation and agent proposal records remain visible. If a recipient is properly linked and the engagement passes current policy/approval checks, only the selected simulated channel may receive the message.
 
 ### 2.6 Provider-agnostic external integrations
 
@@ -211,6 +212,8 @@ The Core API should authenticate the demo customer session and derive bank/custo
 **First-release requirement:** Cuebik's bank-facing dashboard, product catalog, Core API, customer-intelligence processing, recommendation evaluation, Central Agent coordination, bank-policy enforcement, approval workflow, Temporal execution, and audit/feedback history must **function end to end against authoritative backend records**. The fictional banking environment supplies permitted **synthetic customer/account/activity data**, and the virtual phone provides **simulated customer delivery views**. Do not substitute UI-only recommendations, fake dashboard totals, fixed agent outputs, or animated message delivery for actual application behavior.
 
 **Input boundary:** The first implementation supports **CSV uploads of fictional customer data** through the bank-facing dashboard **and synthetic customer activity from the banking simulator**. Both must use validated, bank-scoped ingestion into the same authoritative customer-intelligence pipeline, recording import results and data provenance. Bank employees must be able to create and manage real product-catalog records in the dashboard. Real bank feeds and real money movement are not part of this initial demonstration. The precise CSV columns, mapping, error handling and import workflow are implementation details.
+
+**Approved identity-and-delivery boundary:** The Core API associates customer data, recommendations, agent decisions and simulated inbox messages with an authoritative **bank-scoped customer reference**. It must not infer that a CSV record has a simulator recipient merely because it was imported or has a similar name. **Unlinked CSV-only records remain fully analyzable and visible on the bank dashboard**, but they do not produce a virtual Banking App, SMS or Email delivery. The selected simulated adapter can dispatch only to an explicitly matched, authorized simulator recipient following active policy and any required approval. An independently configured real SMS/email provider, if later enabled, requires its own verified destination and actual delivery evidence. **No simulated recipient ≠ no customer intelligence; no delivery evidence ≠ Delivered.**
 
 **Approved timing inputs; trigger mechanics pending:** Recorded and permitted bank-app opens/interactions, last-observed activity, customer engagement history and bank contact windows may inform the Central Agent's proposed time and its evidence-based rationale. These signals are not global online-presence tracking or proof of an optimal send time; missing signals do not imply inactivity. On permitted changes to customer data or catalog terms, **event-driven evaluation is the proposed initial trigger**, with optional scheduled re-evaluation at a configured cadence; the exact trigger mechanics remain implementation choices. **Only a qualifying Recommend outcome** can initiate engagement planning; Clarify and Suppress do not create a marketing handoff. Bank policy and, where required, human review authorize a proposed channel, content and timing. Temporal coordinates an authorized wait and pre-dispatch checks; no continuously running LLM loop is required.
 
