@@ -1,6 +1,6 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.1  
+**Version:** 0.1.2  
 **Status:** Draft for product review  
 **Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
@@ -16,7 +16,7 @@ Cuebik is a banking intelligence and engagement platform that helps banks unders
 
 Banks connect authorized systems and data to Cuebik and manage their institution's activity from an isolated organization workspace. Cuebik combines permitted customer signals with bank-defined product information to evaluate potential matches, coordinate an appropriate next action, and apply bank-controlled communication rules. Authorized engagement instructions reach customers through the bank's existing channels, and resulting delivery or interaction feedback returns to Cuebik where available.
 
-**Cuebik is a bank-facing platform, not a consumer bank.** Bank customers do not sign into Cuebik. They experience relevant recommendations through their own bank's mobile app, SMS, or email. A separate synthetic-data banking Progressive Web App (PWA) may demonstrate the customer experience without implying a live bank integration.
+**Cuebik is a bank-facing platform, not a consumer bank.** Bank customers do not sign into Cuebik. They experience relevant recommendations through their own bank's mobile app, SMS, or email. A separate synthetic-data banking Progressive Web App (PWA) demonstrates the experience through a fictional bank's Banking App, SMS, and Email interfaces, without implying a live bank integration or real messages sent to customers.
 
 ### 1.1 Product promise
 
@@ -123,6 +123,30 @@ Four functional connection areas:
 4. **Delivery & Feedback:** Receive provider acknowledgements and permitted customer interaction events.
 
 **Required behaviour:** An integration has a configured scope, lifecycle status, last-known synchronization/health information, and a clear distinction between simulated connectivity and an actual connected bank system. Failed connections cannot silently convert unknown data into verified facts or unknown deliveries into confirmed deliveries.
+
+#### 5.1.1 Customer experience simulator (banking PWA)
+
+**Purpose:** Provide a visible, stateful customer-side integration simulator demonstrating how Cuebik receives permitted bank signals, proposes suitable product engagement, applies approval controls, routes authorized messages to a bank channel, and receives customer feedback. This is **a fictional banking environment**, not a replacement bank, real bank integration, or real money-transfer service.
+
+**User experience and visual identity:**
+- The independently deployed Next.js PWA displays a **virtual smartphone shell on desktop** (a centered phone-sized viewport); on actual supported mobile browsers it uses the available mobile screen instead of nesting a second phone frame.
+- The simulated phone has a home screen and distinct **Banking App**, **SMS**, **Email**, and **Notifications** experiences within the same PWA. These are simulated application views, not Android system applications, an actual telecom inbox, or an external mailbox.
+- Use the canonical fictional **Harbourline Bank** identity. A red-led color palette may take inspiration from Zenith Bank's colors, but the app must **not reproduce official Zenith branding, logos, proprietary interface screens, or imply official endorsement or integration**. The simulator should visibly identify itself as fictional/simulated.
+- The PWA's bank-customer design language is independent of Cuebik's marketing/dashboard design system. Its phone-viewport layout, navigation, forms, and readable message surfaces must remain accessible.
+
+**Synthetic banking activity:**
+- Bank-customer accounts, balances, and illustrative transaction histories are **fictional, seeded data**. Supported interactive actions (for example, a simulated deposit or savings action) may modify only the isolated synthetic dataset and produce a **bank-simulator-originated event** for Cuebik's normal authorized ingestion and customer-intelligence processing.
+- Simulator actions must not move real funds, connect to real accounts, create real payment instructions, request bank credentials, or claim that fictional transactions occurred in an actual banking system.
+- Mark synthetic events with organization/customer-demo scope, source, event identity, timestamp, and provenance. A UI interaction does **not** guarantee a recommendation: eligibility may produce **Clarify** or **Suppress**, or policy may prohibit any outreach.
+
+**Delivery and feedback:**
+- The Cuebik Central Agent proposes **one permitted engagement channel for a given engagement**, and bank policies may require review or withhold it. The same recommendation is **not automatically broadcast to Banking App, SMS, and Email** merely because the simulator offers all three inboxes.
+- After final authorization, the selected *simulation adapter* records an appropriate channel-specific inbox item. The PWA reads this item from the backend rather than rendering a pre-scripted recommendation as if it were delivered.
+- **Banking App** presents in-app product information; **SMS** presents a simulated text-message thread; **Email** presents a simulated email inbox and message view. Distinguish simulated channel dispatch and simulator acknowledgements from real carrier/SMTP delivery.
+- Evidence-backed user actions (such as opening a message, dismissing an offer, clicking for details or requesting information) return through customer-scoped API endpoints and are recorded against the originating engagement. UI display alone must not be treated as a confirmed customer view or proof of real-world delivery.
+- Cuebik's dashboard reads the same authoritative backend events, enabling an end-to-end demonstration of recommendation evidence, approval state, channel selection, simulated dispatch, and feedback. No isolated UI-only counters or fabricated delivery state may replace this record.
+
+**Demonstration integrity:** Any simulated delivery/feedback must be **explicitly labeled simulated**. Failed approvals, missing permissions, stale terms, rejected requests, suppressed matches, and withheld engagements must never produce an inbox item. The simulator cannot bypass pre-dispatch checks or fabricate a successful customer outcome.
 
 ### 5.2 Products & Catalog
 
@@ -332,6 +356,10 @@ A required permission becomes restricted, eligibility changes, the catalog produ
 
 An administrator saves a new policy draft and runs illustrative scenarios. The active policy remains unchanged until authorized activation. Once a new version becomes effective, future evaluations use that version; historical recommendations, approvals, and engagements are not overwritten or silently replayed.
 
+### Scenario H — Bank PWA to Cuebik and back
+
+A fictional Harbourline Bank customer performs a **simulated** savings deposit in the virtual smartphone's Banking App. The PWA posts an authorized synthetic event to the Core API, which records its provenance and makes permitted signals available to Customer Intelligence and the Recommendation Engine. If the outcome is **Recommend**, the Central Agent may propose a customer message; the Policy Engine either **Withholds**, requires **Review**, or permits **Automate**. For Review, the authorized bank reviewer must approve the exact message before dispatch. Temporal-based engagement execution applies final checks and sends the approved instruction to **only the selected simulated channel**. The corresponding Banking App, SMS, or Email view retrieves its newly created backend inbox item. If the customer opens the message or requests details, that supported event is saved and shown in Cuebik's dashboard. Suppressed, withheld, unapproved and expired engagements produce no inbox message; sending and receiving simulation acknowledgements do not imply actual network SMS/email delivery.
+
 ---
 
 ## 9. Quality requirements and responsible operation
@@ -369,7 +397,7 @@ These describe required **product behaviour**, not claims of completed certifica
 
 - Bank-facing administrative language should be understandable without engineering expertise.
 - Support Nigerian banking context, NGN/₦, West Africa Time, and clear status labels that do not depend only on color.
-- The dashboard follows `DESIGN.md`; the separate customer-facing demonstration app follows its fictional bank's own design language.
+- The dashboard follows `DESIGN.md`; the separate customer-facing simulator follows its fictional bank's own design language. Its red-inspired palette is not a copy of Zenith Bank's official UI or a claim of an official integration.
 
 ---
 
@@ -405,7 +433,7 @@ This section distinguishes the **defined full experience** from the **initial fu
 - At least one real, stateful authorized human approval workflow.
 - Controlled engagement instruction routing to a bank-channel demonstration adapter, with accurate status and feedback events.
 - Dashboard modules connected to shared records, not unrelated screen-specific fixtures.
-- A separate installable synthetic-data banking PWA (Next.js) displaying only appropriately authorized, Core API-backed recommendation content and sending supported customer feedback to the platform. Account and transaction screens may use synthetic seeded data; recommendation delivery and feedback must not be disconnected hardcoded fixtures.
+- An independently deployed Next.js banking PWA that displays a desktop virtual smartphone and mobile full-screen mode, including Banking App, SMS, Email and Notifications simulations. Seeded customer financial activity can generate source-labeled synthetic events for real Cuebik evaluation. Authorized channel-specific messages and supported feedback must round-trip through the Core API rather than disconnected UI fixtures.
 
 ### 11.2 Subsequent product capabilities
 
@@ -432,6 +460,8 @@ These are **open product decisions** requiring explicit agreement before detaile
 8. **Product success evaluation:** Define baseline comparisons and which customer-respectful outcomes can actually be measured with the available dataset.
 9. **Bank connection model:** Agree the permitted ingestion/product/delivery/feedback capabilities required for the first functional system versus later external connectors.
 10. **Reference dataset:** Establish one canonical synthetic organization, customer, catalog, recommendation, policy, approval, and engagement fixture set so every product screen agrees.
+11. **Simulator financial events:** Select the first supported fictional deposit/savings/transfer-like interactions, synthetic balance effects, event identifiers, and allowed feature updates; no real money movement.
+12. **Simulator channel contracts:** Specify how approved engagements become backend Banking App/SMS/Email inbox items, which simulated acknowledgements are credible, and how customer actions propagate to the dashboard without falsely claiming external delivery.
 
 **Technology selection, deployment topology, programming languages, frameworks, database products, hosting, and concrete API endpoints are intentionally outside this file.** They are evaluated after product scope and constraints are approved, then recorded in `ARCHITECTURE.md` and machine-readable contracts as appropriate.
 
