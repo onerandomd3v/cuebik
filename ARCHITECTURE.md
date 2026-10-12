@@ -307,7 +307,7 @@ Both input routes trigger **real backend processing against initial synthetic ba
 
 ### 4.2 Approved initial matching, governance and evaluation baseline
 
-The following product decisions are recorded in [\`PRODUCT.md\` §5](PRODUCT.md#5-functional-product-domains), [§8](PRODUCT.md#8-product-journeys-and-illustrative-acceptance-scenarios) and [§10](PRODUCT.md#10-measurement-and-evidence); this section translates them into engineering boundaries without prescribing arbitrary scores or database schemas.
+The following product decisions are recorded in [PRODUCT.md §5](PRODUCT.md#5-functional-product-domains), [§8](PRODUCT.md#8-product-journeys-and-illustrative-acceptance-scenarios) and [§10](PRODUCT.md#10-measurement-and-evidence); this section translates them into engineering boundaries without prescribing arbitrary scores or database schemas.
 
 - **Three initial catalog families:** Savings, fixed deposits and SME/credit, each with fictional bank-defined product terms and eligibility/exclusion rules. **SME/credit outbound recommendations require authorized human review**; an informational credit opportunity is not a lending/affordability decision.
 - **Recommendation execution:** Compute permitted, traceable features such as deposit regularity, balance trends, existing holdings and stated goals when supported by source evidence; enforce required eligibility **before** an explainable relevance rank. The first release does **not** require a trained ML ranker or GPT-OSS for matching. Unknown required evidence cannot be hallucinated or overridden by a ranking score.
