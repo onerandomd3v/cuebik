@@ -1,6 +1,6 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.4  
+**Version:** 0.1.5  
 **Status:** Draft for product review  
 **Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
@@ -158,7 +158,11 @@ Each product should have a stable bank-scoped reference, name, category, concise
 
 Products may be created and maintained manually or imported/synchronized from an authorized source. Catalog records should distinguish **Draft**, **Active**, and **Inactive/Paused** states and preserve sufficient version/change history to explain previous decisions.
 
-**Rules:** Only currently active, appropriately configured products are candidates for new outgoing recommendations. A catalog update must not silently rewrite a historical recommendation or previously approved message. Credit products are *opportunities for information or application*, not pre-approved lending decisions.
+**Approved first-release product families:** The editable initial catalog supports **savings**, **fixed-deposit**, and **SME/credit** products with plausible, explicitly fictional bank-defined terms, eligibility and exclusions.
+
+**First-release product treatment:** Savings and fixed-deposit candidates can enter controlled automation only when current evidence satisfies bank-defined eligibility and an explicitly active policy allows their engagement; an applicable review requirement still takes precedence. **SME/credit-related outbound recommendations require human review**, verified information sufficient for the particular bank-defined product requirements, and clear communication that this is an informational or application opportunity—not pre-approved credit or an affordability decision. Recurring deposits or a relevance score alone do not prove borrowing capacity, loan eligibility, or customer benefit.
+
+**Rules:** Only currently active, appropriately configured products are candidates for new outgoing recommendations. A catalog update must not silently rewrite a historical recommendation or previously approved message. Product availability and engagement authorization are separate decisions.
 
 ### 5.3 Customers & Customer Intelligence
 
@@ -180,15 +184,19 @@ Cuebik must not present an inferred life event, purchasing intent, disposable in
 
 For each evaluation, use the bank's active catalog and eligible, sufficiently fresh customer evidence; apply hard product criteria separately from statistical relevance. Preserve evidence references, a comprehensible match rationale, important unknowns, catalog version, and evaluation time.
 
+**Approved initial matching baseline:** Implement real Python feature processing with **deterministic product eligibility and exclusions before transparent, explainable relevance ranking**. Consider only available, permitted and evidence-backed signals appropriate to the product: e.g. deposit regularity, recorded balance trends, current product holdings, customer-stated goals and freshness/provenance. Missing signals are unknown—not negative evidence—and inferred interests do not satisfy mandatory eligibility conditions. Bank-defined product rules decide hard restrictions; ranking cannot override them. A learned ML ranker is **not a dependency for the first release**; introduce one only after comparing it to this baseline on representative, independently assessed examples. Neither synthetic labels nor a model score demonstrate real-world suitability.
+
 The engine must produce one of three explicit outcomes:
 
 | Outcome | Meaning | Consequence |
 | --- | --- | --- |
 | **Recommend** | Evidence supports considering an eligible bank product as potentially relevant. | Makes a candidate available for governed engagement planning; **does not send it**. |
-| **Clarify** | Missing, uncertain, contradictory, or insufficient information prevents a reliable conclusion. | Record the gap and request authorized enrichment or clarification; do not silently treat it as a positive match. |
+| **Clarify** | Missing, uncertain, contradictory, or insufficient information prevents a reliable conclusion. | Create an **internal evidence-gap record** for the bank; hold engagement. Reevaluate when valid new evidence arrives. No automatic customer-directed clarification in the first release. |
 | **Suppress** | Product is ineligible, unsuitable under defined controls, restricted, or lacks a defensible recommendation basis. | No engagement handoff for that candidate. Retain an appropriate internal explanation. |
 
 A recommendation score, where present, is an evaluation signal, not a probability of customer acceptance, guaranteed suitability, or a lending decision. Multiple candidates may be evaluated for a customer, but product ranking must not defeat exclusions or customer restrictions.
+
+**Approved first-release clarification path:** A Clarify result identifies the exact missing or conflicting evidence, its source when known, and the affected candidate. It is visible to authorized bank staff and may be resolved by a later permitted CSV import, simulator activity or other authorized record update. It does **not** generate an outbound request for customer financial information or an agent marketing proposal.
 
 ### 5.5 Central Agent & Agent Activity
 
@@ -206,8 +214,10 @@ The ambient connected-intelligence visualization is a visual summary of product 
 
 **Organization-wide modes**
 
-- **Manual Review:** Otherwise eligible proposed customer engagements require authorized human review before dispatch.
-- **Controlled Automation:** Individual active bank policies may allow automatic authorization for specified engagements; matching review requirements and mandatory withholding restrictions still apply.
+- **Manual Review:** Initial safe starting mode; otherwise eligible proposed customer engagements require authorized human review before dispatch.
+- **Controlled Automation:** Bank staff can explicitly activate policies permitting automatic authorization for specified **eligible, permitted savings and fixed-deposit engagements**. A matching review mandate and mandatory withholding restrictions still take priority. No engagement automatically inherits permission solely from its product category.
+
+**Approved first-release treatment:** SME/credit-related outbound recommendations always require authorized human review when otherwise permitted, even in Controlled Automation mode. Where mandatory eligibility or required promotional permission is missing or prohibited, the relevant communication must not dispatch; when no active policy authorizes an engagement, do not assume automation. Exact product-specific thresholds, contact limits and permitted windows belong to versioned bank rules and their implementation tests—not to invented universal defaults.
 
 **Per-proposal policy decisions**
 
@@ -364,7 +374,19 @@ A fictional Harbourline Bank customer performs a **simulated** savings deposit i
 
 ### Scenario I — CSV intelligence without simulator registration
 
-A bank employee imports fictional customer records from a CSV through the working dashboard. The Core API validates and saves scoped customer evidence, then Customer Intelligence and the Recommendation Engine evaluate eligible products. Bank staff can inspect actual results and agent activity even for customers with **no banking-simulator session**. Recorded, bank-supplied contact permissions and available delivery capabilities still govern any later outbound engagement; a CSV import or recommendation alone never claims that a message reached a customer.
+A bank employee imports fictional customer records from a CSV through the working dashboard. The Core API validates and saves scoped customer evidence, then Customer Intelligence and the Recommendation Engine evaluate eligible products. Bank staff can inspect actual results and agent activity even for customers with **no banking-simulator session**. Recorded, bank-supplied contact permissions and available delivery capabilities still govern any later outbound engagement; a CSV import or recommendation alone never claims that a message reached a customer. **An imported customer without a linked simulated recipient cannot acquire a fictional Banking App/SMS/Email inbox delivery record by assumption.** Their intelligence and agent proposals remain visible; dispatch requires an actual configured and authorized destination/adapter and genuine corresponding evidence.
+
+### Scenario J — Credit opportunity requires human review
+
+A fictional SME customer meets the explicit eligibility requirements for a bank-defined SME/credit information or application opportunity using verified permitted evidence. The engine returns an explainable **Recommend**, without claiming credit approval or affordability from deposit history alone. The Central Agent may propose a message, but policy returns **Review** for this product family; until an authorized bank employee approves the exact permitted message, no outbound dispatch occurs. Missing mandatory evidence instead produces **Clarify** or an exclusion-led **Suppress**, as appropriate.
+
+### Scenario K — Clarify is internal; later evidence triggers re-evaluation
+
+A customer's recorded savings behavior suggests potential interest, but a required product criterion cannot be established. The engine records **Clarify** and a named internal evidence gap, without creating a customer-directed information request or promotional message. A later validated CSV update or simulator event provides the missing fact; Cuebik reevaluates the candidate using the current product rules and records a new outcome linked to the new evidence. Prior decisions remain auditable.
+
+### Scenario L — No active automation rule
+
+A customer-product match is **Recommend** and the customer has valid promotional contact permission, but no active bank policy authorizes automatic outreach. Cuebik records the proposal and does not silently dispatch it. Manual Review mode requires an authorized employee's decision; Controlled Automation only automates engagements covered by an explicitly active, applicable rule.
 
 ---
 
@@ -420,6 +442,8 @@ Cuebik should measure both commercial and customer-respectful outcomes. Metrics 
 | Customer feedback | Explicit interests, product-information requests, verified interactions | Clicks and opens are not proof of uptake or welfare. |
 | Operations | Catalog freshness, data readiness, policy version usage, dependency failures | Demonstration metrics are not real operating SLAs. |
 
+**Approved first-release evaluation:** Use one **canonical synthetic bank, customer, product-catalog and event dataset** with independently specified expected outcomes rather than engineering records merely to produce a desired success score. Verify: eligibility pass/fail; correct **Recommend / Clarify / Suppress** decisions and cited evidence; internal Clarify handling and updates; bank policy **Automate / Review / Withhold**; human approval and rejection; prevention of unauthorized/duplicate dispatch; correct simulated delivery/feedback states; and CSV-only customers without fabricated inbox delivery. Report scenario pass/fail and relevant denominators as **synthetic test results**, not customer uptake, bank profit, actual conversion rates or demonstrated suitability.
+
 Evaluation should eventually consider relevance, transparent terms, unwanted-contact burden, fairness, and adverse financial outcomes—not merely conversions.
 
 ---
@@ -431,14 +455,14 @@ This section distinguishes the **defined full experience** from the **initial fu
 ### 11.1 Initial functional baseline
 
 - Authenticated, organization-scoped banking workspace with a **single Super Admin** role.
-- Working bank-dashboard CSV import of fictional customer records, permitted banking-simulator event ingestion into the same customer-intelligence pipeline, and a usable, editable bank product catalog.
+- Working bank-dashboard CSV import of fictional customer records, permitted banking-simulator event ingestion into the same customer-intelligence pipeline, and a usable, editable **savings, fixed-deposit and SME/credit** bank product catalog.
 - Customer intelligence profiles with fact/hypothesis separation and evidence readiness.
-- End-to-end Recommend / Clarify / Suppress matching with explanations.
+- End-to-end **deterministic eligibility and explainable relevance ranking** with Recommend / Clarify / Suppress decisions; Clarify creates an internal evidence-gap record rather than automatically contacting customers.
 - Central Agent decisions and activity records linking to source recommendations.
-- Enforced bank-defined Automate / Review / Withhold policies, including a simple organization-wide autonomy mode.
+- Enforced bank-defined Automate / Review / Withhold policies, starting in Manual Review mode; controlled automation requires an explicitly active bank policy, and SME/credit outreach requires human review.
 - At least one real, stateful authorized human approval workflow.
 - Controlled engagement instruction routing to a bank-channel demonstration adapter, with accurate status and feedback events.
-- Dashboard modules connected to shared records, not unrelated screen-specific fixtures.
+- Dashboard modules connected to shared records, not unrelated screen-specific fixtures; include one canonical synthetic scenario dataset with auditable expected results and no fabricated CSV-only customer delivery.
 - An independently deployed Next.js banking PWA that displays a desktop virtual smartphone and mobile full-screen mode, including Banking App, SMS, Email and Notifications simulations. Seeded customer financial activity can generate source-labeled synthetic events for real Cuebik evaluation. Authorized channel-specific messages and supported feedback must round-trip through the Core API rather than disconnected UI fixtures.
 
 ### 11.2 Subsequent product capabilities
@@ -454,18 +478,18 @@ An incomplete feature must be described as planned or illustrative rather than p
 
 ## 12. Dependencies and product decisions to resolve
 
-These are **unresolved product-level decisions** requiring explicit agreement before their detailed contracts are finalized. Approved technologies and remaining technical choices are tracked in `ARCHITECTURE.md`.
+**The initial product-family scope, eligibility-first explainable matching baseline, internal-only Clarify, safe automation defaults, and synthetic acceptance-evaluation approach are approved** in §5, §8, §10 and §11. Items below are **implementation and test-definition details still to specify**, not requests to re-approve those product decisions. Technical selections belong in `ARCHITECTURE.md`.
 
-1. **Initial product families:** Confirm the specific savings, fixed-deposit, and SME/credit product types needed for the first curated catalog, with genuine fictional terms and eligibility rules.
+1. **Catalog fixtures and eligibility:** Define the fictional product variants, stated terms, eligibility and exclusion test cases for the approved savings, fixed-deposit and SME/credit families.
 2. **Customer signal contract:** Define exact CSV and simulator financial/behavioural summaries, permissible bank-app activity/engagement timing signals, freshness rules, and stated preferences the evaluation will accept.
-3. **Clarification handling:** Confirm which gaps are resolved internally versus which could generate a separately authorized customer prompt.
-4. **Product suitability boundaries:** Decide which exclusion criteria are mandatory bank rules and which evaluations may be learned or inferred.
-5. **Autonomy defaults:** Agree the initial bank policy set, review thresholds, frequency restrictions, permitted channels, and the safe behaviour when no rule matches.
+3. **Clarification implementation:** Specify internal evidence-gap presentation, authorized source updates and re-evaluation behavior; customer-directed clarification is outside the initial release.
+4. **Product suitability implementation:** Encode bank-defined mandatory exclusions independently from relevance ranking, with credit-related opportunities reviewed and no inferred affordability claims.
+5. **Bank-policy fixtures:** Define example active/draft policies, appropriate contact windows and frequency limits for the approved Manual Review start, explicit Controlled Automation and mandatory credit review; do not invent universal thresholds.
 6. **Approval roles:** Define the one-Super-Admin functional baseline while preserving the future distinction between ownership, review, and policy-activation permissions.
 7. **Delivery evidence:** Define which simulated events justify Sent, Delivered, Failed, or Unknown for Banking App, SMS, and Email.
-8. **Product success evaluation:** Define baseline comparisons and which customer-respectful outcomes can actually be measured with the available dataset.
+8. **Synthetic evaluation details:** Define independent expected outcomes, scenario coverage and pass/fail reports for the approved canonical test suite; do not claim synthetic engagement as production conversion or real customer benefit.
 9. **Bank connection model:** CSV imports and banking-simulator events are the agreed initial data sources; define the scope of later real-bank ingestion, catalog, delivery and feedback connectors.
-10. **Reference dataset:** Establish one canonical synthetic organization, customer, catalog, recommendation, policy, approval, and engagement fixture set so every product screen agrees.
+10. **Canonical reference dataset:** Prepare and validate the approved single synthetic organization, customer, catalog, recommendation, policy, approval and engagement test fixtures so all product screens and acceptance checks agree.
 11. **Simulator financial events:** Select the first supported fictional deposit/savings/transfer-like interactions, synthetic balance effects, event identifiers, and allowed feature updates; no real money movement.
 12. **Simulator channel contracts:** Specify how approved engagements become backend Banking App/SMS/Email inbox items, which simulated acknowledgements are credible, and how customer actions propagate to the dashboard without falsely claiming external delivery.
 
