@@ -1,7 +1,7 @@
 # Cuebik — Brand Guidelines
 
-**Version:** 1.3.1  
-**Updated:** 11 October 2026  
+**Version:** 1.3.2  
+**Updated:** 12 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
 This file is the **source of truth for Cuebik's brand identity**. Contributors and coding agents should follow its naming, colors, typography, logo, and messaging rules. Interface-level specifications belong in Cuebik's separate `DESIGN.md`.
@@ -138,7 +138,7 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Cuebik** | The full product |
 | **Customer Intelligence Layer** | Organizes customer financial and app-behaviour information into useful profiles |
 | **Recommendation Engine** | Determines which financial products best match individual customers, or returns no suitable match |
-| **Central AI Agent** | Coordinates whether, when, and how to engage customers |
+| **Central Agent** | Coordinates whether, when, and how to propose customer engagement |
 | **Policy & Autonomy Engine** | Enforces bank-defined automation, human review, and engagement withholding controls |
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
 | **Organization Workspace** | A bank-specific workspace where authorized employees monitor recommendations, manage team access, and control engagement |
@@ -151,21 +151,9 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 
 ## 08. Brand assets and governance
 
-**Canonical repository structure**
+**Asset and documentation ownership**
 
-```text
-cuebik/
-├── BRAND.md
-├── DESIGN.md
-└── assets/
-    └── brand/
-        ├── mark/
-        │   ├── cuebik-symbol-dark.svg
-        │   └── cuebik-symbol-light.svg
-        └── wordmark/
-            ├── cuebik-full-logo-dark.svg
-            └── cuebik-full-logo-light.svg
-```
+The approved SVG paths in [§04](#04-logo-guidelines) are the canonical brand assets. The **repository layout** is defined in [`ARCHITECTURE.md`](ARCHITECTURE.md), rather than duplicated here. `DESIGN.md` currently lives at the repository root and is planned to move to `apps/web/DESIGN.md` when those application directories are created.
 
 - **`BRAND.md`** controls brand identity: names, messaging, logos, colors, typography, and overall visual direction.
 - **`DESIGN.md`** controls implementation: design tokens, responsive layouts, components, dashboard patterns, themes, and interaction details. It must follow `BRAND.md` where the two overlap.
