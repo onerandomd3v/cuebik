@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.6  
+**Version:** 0.4.7  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -252,7 +252,7 @@ Applications retain independent builds and deployments. Core modules share autho
 
 The selected backend language and framework are recorded in [§1](#1-technology-decisions-and-open-evaluations); deployable ownership is defined in [§2](#2-approved-application-and-service-boundaries). The following rules specify **how the distinct Python workloads cooperate**, without repeating the technology matrix.
 
-- **Customer Intelligence and Recommendation Engine (`apps/backend/intelligence`):** Transform permitted bank-scoped signals into evidence with provenance and freshness, check active catalog eligibility **before** relevance scoring, and return structured **Recommend / Clarify / Suppress** outcomes with evaluation and product versions. An explainable baseline comes first; learned ranking requires representative labels and measured improvement. A synthetic dataset does not prove real-world model performance.
+- **Customer Intelligence and Recommendation Engine (`apps/backend/intelligence`):** Transform permitted bank-scoped signals into evidence with provenance and freshness, check active catalog eligibility **before** relevance scoring, and return structured **Recommend / Clarify / Suppress** outcomes with evaluation and product versions. The **first release uses Python deterministic eligibility and explainable feature-based relevance ranking**; learning-based rankers are later evaluation candidates, not initial dependencies. A synthetic dataset does not prove real-world model performance.
 - **Central Agent (`apps/backend/agent`):** Consume a qualifying recommendation result and permitted bank-app activity/engagement evidence, then propose whether, when, and how to engage through a validated, explainable Core API record. The selected **gpt-oss** model can assist with bounded proposal reasoning and message drafting through the Model Gateway; the **Recommendation Engine handles product eligibility/ranking separately**, and Temporal handles authorized scheduling. No LLM output is approval or dispatch permission.
 - **Policy and transactional core (`apps/backend/api`):** Evaluate versioned bank restrictions deterministically (**Automate / Review / Withhold**), maintain authoritative approvals and engagement state, and reject unauthorized transitions. External intelligence and agent services cannot modify protected state directly.
 - **Durable execution (`apps/backend/engagement` with Temporal):** Activities perform I/O, scheduled operations and channel handoffs after a final Core API authorization check. Temporal tracks workflow progress; PostgreSQL remains the business source of truth. Retries and external side effects require explicit idempotency and evidence-based status updates.
@@ -304,6 +304,19 @@ flowchart TD
 ```
 
 Both input routes trigger **real backend processing against initial synthetic banking data**. Engagement is **never automatic merely because a recommendation exists**; a valid bank authorization is required. In the first demonstration, channel delivery is to labeled **simulated inboxes** unless a separately authorized real-provider path has been enabled. Dashboard values and activity must reflect persisted backend state.
+
+### 4.2 Approved initial matching, governance and evaluation baseline
+
+The following product decisions are recorded in [\`PRODUCT.md\` §5](PRODUCT.md#5-functional-product-domains), [§8](PRODUCT.md#8-product-journeys-and-illustrative-acceptance-scenarios) and [§10](PRODUCT.md#10-measurement-and-evidence); this section translates them into engineering boundaries without prescribing arbitrary scores or database schemas.
+
+- **Three initial catalog families:** Savings, fixed deposits and SME/credit, each with fictional bank-defined product terms and eligibility/exclusion rules. **SME/credit outbound recommendations require authorized human review**; an informational credit opportunity is not a lending/affordability decision.
+- **Recommendation execution:** Compute permitted, traceable features such as deposit regularity, balance trends, existing holdings and stated goals when supported by source evidence; enforce required eligibility **before** an explainable relevance rank. The first release does **not** require a trained ML ranker or GPT-OSS for matching. Unknown required evidence cannot be hallucinated or overridden by a ranking score.
+- **Internal Clarify:** Record the missing or contradictory evidence in the bank workspace; do not ask customers for more data automatically in the initial release. Reevaluate affected candidates after a validated source update and retain historical outcomes.
+- **Authorization defaults:** Start the bank in **Manual Review** mode. Controlled Automation of eligible, permitted savings or fixed-deposit engagement requires an explicitly enabled **active bank policy**. Existing restrictions, mandatory checks and credit-review requirements take precedence; no active matching rule does not imply permission to auto-dispatch.
+- **Test integrity:** Create one coherent synthetic reference dataset with independently specified expected outcomes for eligibility, ranking, Clarify/Suppress, bank reviews, authorization blocks, simulated handoff, feedback and duplicate prevention. Treat pass/fail results as **synthetic acceptance tests**, not proof of customer benefit, real-bank conversion or learned-model accuracy.
+- **CSV-only recipients:** Imported customers can generate authentic intelligence, recommendations and agent proposals without using the banking PWA. Do **not** generate a fictional inbox delivery for a customer with no linked simulated recipient. Customer communications require a configured authorized destination and supported delivery evidence.
+
+The exact example products, feature thresholds, fixture rows, error messages and test assertions are implementation/test-definition work.
 
 ## 5. Model Gateway and provider portability
 
@@ -365,10 +378,10 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 
 1. **Workflow reliability:** Define Temporal Workflow/Activity boundaries, human approval signals, cancellation, timeout/retry policies, idempotency, transactional outbox/reconciliation and the pre-dispatch authorization boundary. Validate Temporal Cloud region, retention, pricing and separately hosted Python workers.
 2. **Simulator contracts:** Finalize bank-scoped synthetic financial and app-activity event schemas, demo-customer authentication, permitted telemetry provenance, approved inbox records, per-channel acknowledgements, feedback attribution and duplicate-event handling. Acceptance scenarios are specified in [§2.5](#25-integration-acceptance-checks).
-3. **Intelligence and agent evaluation:** Choose feature-processing and ranking baselines, then evaluate evidence quality and any ML tooling. Benchmark the selected **gpt-oss** family through hosted inference (Groq first for evaluation) on Cuebik-specific proposal quality, schema compliance, **activity-aware timing explanations**, latency, privacy and cost; optionally compare Qwen. The production model version, provider and failure behavior are not yet approved.
+3. **Intelligence and agent evaluation:** Implement and test the **approved Python eligibility-first, explainable ranking baseline** using bank-defined product criteria and provenance-backed customer features. Assess ML tooling only if later evaluation demonstrates improvement over that baseline. Benchmark the selected **gpt-oss** family through hosted inference (Groq first for evaluation) on Cuebik-specific proposal quality, schema compliance, **activity-aware timing explanations**, latency, privacy and cost; optionally compare Qwen. The production model version, provider and failure behavior are not yet approved.
 4. **Authentication and service boundaries:** Specify employee sessions, credentials, authorization roles and MFA needs; define versioned inter-service contracts, tenant isolation, data ownership and audit records.
 5. **Infrastructure and operations:** Select hosting/regions for Next.js apps, Core API, intelligence and workers, plus managed PostgreSQL. Specify secrets, backups, tracing storage, recovery procedures, operational alerts and measurable service objectives.
 6. **SMS and Email provider adapters:** Africa's Talking and SendByte are the selected initial providers. Validate their adapter integrations and normalized feedback behavior during implementation; demo inboxes remain simulated by default.
-7. **Customer ingestion and visualization:** Implement approved CSV customer imports and simulator-originated customer events through the same validated bank-scoped processing path. Define exact CSV schemas and ingestion mechanics during implementation. An interactive evidence graph remains optional; neither input path requires a new database or external AI dependency by default.
+7. **Customer ingestion, policy fixtures and evaluation:** Implement approved CSV customer imports and simulator-originated customer events through the same validated bank-scoped processing path. Define exact CSV schemas and ingestion mechanics; configure fictional savings/fixed-deposit/SME-credit catalog terms and review/automation policies; build the agreed **canonical synthetic acceptance dataset** with independently defined expected outcomes. An interactive evidence graph remains optional; neither input path requires a new database or external LLM dependency by default.
 
 **Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
