@@ -1,47 +1,41 @@
 # Cuebik — System Architecture
 
-**Version:** 0.2.0  
-**Status:** Working draft — provisional technology and service-boundary design; no stack approved  
-**Updated:** 11 October 2026
+**Version:** 0.3.0  
+**Status:** Working draft — approved direction with open implementation decisions  
+**Updated:** 12 October 2026
 
-> **Document scope:** This document records proposed technology candidates and service boundaries for review. Neither the stack nor the deployment architecture is finalized. Product requirements remain governed by PRODUCT.md. The architecture must be validated against representative workloads, integration and security requirements, and engineering review before it becomes an implementation mandate.
+> **Document scope:** This document records agreed technologies and proposed implementation details. Approved decisions are distinguishable from unresolved vendor, workload, security, and configuration choices. [`PRODUCT.md`](PRODUCT.md) remains authoritative for product behavior. No unimplemented infrastructure or real integrations are represented as operational.
 
-## 1. Provisional technology selection
+## 1. Technology decisions and open evaluations
 
-The following table records the current leading candidates, the product-specific reasons for considering them, and our confidence in their suitability. **No selection in this table is final.**
+The team has approved several technologies and architectural directions. Remaining choices are marked explicitly; **agreement does not substitute for implementation, testing, or security validation**.
 
-| Product responsibility | Leading candidate | Why it fits Cuebik | Confidence |
+| Product responsibility | Selected technology / candidate | Why it fits Cuebik | Decision status |
 | --- | --- | --- | --- |
-| **Operational database** | PostgreSQL | Strong transactional integrity for recommendations, approvals, policies, and engagement records; supports bank-level data isolation. | High |
-| **Backend language** | Python | Extensive ecosystem for customer intelligence, financial data processing, machine learning, and recommendation logic. | High |
-| **Backend framework** | Django + Django Ninja; FastAPI as alternative | Django provides mature data management, transactions, and authentication; Django Ninja adds typed APIs. FastAPI offers a leaner API-first alternative. | Medium |
-| **Data validation & API contracts** | Typed schemas + OpenAPI | Keeps the banking dashboard, Android app, and backend aligned through explicit, validated request and response contracts. | High |
-| **Customer feature processing** | Python data ecosystem (Polars, pandas, NumPy) | Transforms permitted financial and behavioural signals into usable customer features for matching. | High |
-| **Recommendation Engine** | Eligibility rules + ranking model | Keeps mandatory bank product restrictions separate from relevance scoring so an ineligible product cannot qualify merely because it scores highly. | High |
-| **ML tooling** | scikit-learn; LightGBM where justified | scikit-learn supports explainable baselines and evaluation; LightGBM may improve ranking if appropriate labeled data supports it. | Medium |
-| **Central Agent** | Structured orchestration + selective LLM use | Coordinates whether, when, and how to propose engagement while keeping sensitive authorization decisions outside an LLM. | Medium |
-| **Policy evaluator** | Versioned deterministic rules | Produces testable, predictable Automate / Review / Withhold decisions under bank-defined restrictions. | High |
-| **Background execution** | PostgreSQL-backed jobs; Temporal alternative | Supports scheduled engagements, ingestion, and retries; Temporal warrants evaluation for complex, long-running workflows. | Medium |
-| **Web frontend** | React + TypeScript | Supports an interactive banking dashboard with reusable components and typed application data. | High |
-| **Web framework** | Next.js or Vite | Next.js can serve the public website and dashboard together; Vite may simplify a predominantly client-heavy dashboard. | Medium |
-| **Android banking app** | Kotlin Compose or React Native + Expo | Kotlin provides a native Android experience; React Native offers cross-platform development and possible TypeScript reuse. | Medium |
-| **Authentication** | Managed B2B identity or framework-based authentication | Provides controlled employee access while allowing for eventual enterprise identity and organization membership management. | Open |
-| **Hosting & deployment** | Managed containers + managed PostgreSQL | Can run API and background workers independently while supporting persistent storage and controlled deployments. | Medium |
-| **Observability** | OpenTelemetry-compatible instrumentation | Enables tracing and diagnosis across recommendation, agent, policy, approval, and engagement processing. | High |
+| **Operational database** | PostgreSQL | Transactions and relational integrity for approvals, policies, catalog versions and engagements; enables bank-scoped access enforcement. | **Approved** |
+| **Backend language** | Python | Mature ecosystem for financial feature engineering, ranking, evaluation and backend integrations. | **Approved** |
+| **Backend framework** | Django + Django Ninja | Data modeling, transactions, existing authentication primitives and typed OpenAPI endpoints suit the transactional core. | **Approved** |
+| **Data validation & API contracts** | Validated typed schemas + OpenAPI | Keeps dashboard, PWA and services aligned through versioned runtime-validated contracts. | **Approved direction**; schemas pending |
+| **Customer feature processing** | Python; Polars/pandas/NumPy to evaluate | Converts permitted banking summaries into traceable customer features with freshness/uncertainty. | **Python approved**; libraries pending |
+| **Recommendation Engine** | Python eligibility rules + explainable ranking | Keeps mandatory restrictions separate from relevance, returns traceable Recommend / Clarify / Suppress outcomes. | **Approved approach**; ML tooling pending |
+| **ML tooling** | scikit-learn baseline; LightGBM if useful | Supports repeatable evaluation without claiming that synthetic labels establish real-world quality. | **Candidates** |
+| **Central Agent** | Structured Python orchestration + internal Model Gateway | Coordinates whether/when/how with model-independent typed proposals; model never authorizes engagement. | **Approved direction**; framework pending |
+| **Policy evaluator** | Versioned deterministic rules | Produces testable Automate / Review / Withhold decisions independent of generated language. | **Approved approach**; rule schema pending |
+| **Durable workflows** | Temporal Python SDK, Temporal Cloud intended managed control plane | Persists waiting approvals, timers, retries and worker progress across failures without using HTTP requests as durable state. PostgreSQL remains business authority. | **Approved**; cloud pricing and operations pending |
+| **Web frontend** | React + TypeScript (Next.js) | Reusable UI and typed data models across independently deployed web applications. | **Approved** |
+| **Web framework** | Next.js + TypeScript | Powers separate deployable marketing, staff dashboard and banking PWA applications with one web ecosystem. | **Approved** |
+| **Customer banking demo** | Next.js installable PWA | Demonstrates a fictional bank experience on supported Android browsers without native Android infrastructure; real recommendation state comes from the Core API. | **Approved** |
+| **Authentication** | Application-managed using proven Django security primitives | Protects staff access and privileged operations without requiring an identity SaaS at the outset; sessions, MFA and credentials need detailed design. | **Approved approach**; mechanics pending |
+| **Hosting & deployment** | Separately deployable application/worker infrastructure + managed PostgreSQL | Allows independent releases/resources while retaining authoritative transactional storage. | **Direction approved**; vendors and regions pending |
+| **Observability** | OpenTelemetry-compatible instrumentation | Correlates errors and traces across recommendation, agent, approval, policy and engagement workflows. | **Approved**; backend pending |
 
-### 1.1 How to interpret confidence
+### 1.1 Decision boundaries
 
-- **High:** Strong fit to the currently defined product requirements; still subject to design and operational validation.
-- **Medium:** Credible leading approach, but alternatives must be compared against constraints or prototypes.
-- **Open:** Insufficient evidence or unresolved requirements prevent a preferred selection.
+- **Approved:** The technology/direction is selected; concrete configuration, integration and acceptance tests may still be outstanding.
+- **Approved direction:** The architectural approach is agreed, but an implementation library or provider is not yet selected.
+- **Candidate:** Must be validated before adoption.
 
-Confidence is **not** a benchmark result, a production-readiness claim, or approval to implement a candidate.
-
-### 1.2 Important distinctions
-
-1. **High confidence does not mean finalized.** For example, PostgreSQL and Python are strong candidates, but deployment constraints and representative workloads still need examination.
-2. **Some rows describe architectural approaches rather than individual products.** The Recommendation Engine, Central Agent, and policy evaluator require internal design decisions before their supporting libraries can be selected.
-3. **Choices must be evaluated as a system.** The backend framework, database access, background execution, and authorization mechanisms must work together correctly. The same applies to model training, inference, and agent orchestration.
+Decisions must be evaluated as a system: Temporal orchestration must coordinate safely with PostgreSQL business state; LLM results must not bypass policy enforcement; the banking PWA must not fabricate engagement delivery.
 
 ## 2. Proposed application and service boundaries
 
@@ -53,46 +47,48 @@ This Mermaid diagram renders natively in GitHub. It represents the proposed func
 
 ```mermaid
 flowchart TB
-    subgraph Apps["Independently deliverable applications"]
+    subgraph WEB["apps/web: independent Next.js apps"]
         M["Marketing Website"]
-        D["Banking Dashboard"]
-        B["Android Banking Demo App"]
+        D["Bank Dashboard"]
+        P["Banking Demo PWA"]
     end
-    subgraph Core["Cuebik platform"]
-        API["Core Platform API<br/>Organizations, catalog, customers,<br/>policies, approvals, engagement state"]
-        DB[("Authoritative Operational Database")]
-        R["Intelligence & Recommendation Service<br/>Features, eligibility, ranking"]
-        A["Agent Orchestration Worker<br/>Planning and coordination"]
-        E["Engagement Execution Worker<br/>Scheduling, dispatch, feedback"]
-        G["Model Gateway<br/>Provider-neutral interface"]
+    subgraph B["apps/backend: independently runnable services"]
+        API["Core API: Django + Django Ninja<br/>Customers, catalog, policies, approvals, engagements"]
+        REC["Intelligence Service<br/>Python eligibility and ranking"]
+        AG["Central Agent Worker<br/>Planning and model assistance"]
+        EN["Engagement Worker<br/>Authorized delivery and feedback"]
+        GW["Internal Model Gateway"]
     end
-    subgraph Optional["Optional inference runtime"]
-        L["LLM inference<br/>Self-hosted or approved external provider"]
-    end
-    CH["Bank Delivery Adapters<br/>Banking App / SMS / Email"]
+    DB[("PostgreSQL<br/>Authoritative business state")]
+    T["Temporal<br/>Durable workflows: signals, timers, retries"]
+    L["Hosted LLM APIs<br/>gpt-oss / Qwen evaluation"]
+    F["Future self-hosted inference<br/>Not deployed"]
+    C["Bank channels: App / SMS / Email"]
     M -. "Sign-in link" .-> D
-    D -->|"Authorized employee API"| API
-    B -->|"Customer-scoped demo API"| API
-    API <-->|"Transactional persistence"| DB
-    API -->|"Authorized, versioned evaluation"| R
-    R -->|"Match outcome and evidence"| API
-    API -->|"Durable planned work"| A
-    A -->|"Structured proposal"| API
-    A -->|"Optional model assistance"| G
-    G -. "Selected model endpoint" .-> L
-    API -->|"Authorized dispatch work"| E
-    E -->|"Final permission/policy check"| API
-    E -->|"Authorized handoff"| CH
-    CH -->|"Delivery and feedback evidence"| API
+    D -->|"Staff API"| API
+    P -->|"Customer-scoped demo API"| API
+    API <-->|"Transactions"| DB
+    API -->|"Versioned evaluation"| REC
+    REC -->|"Evidence and outcome"| API
+    API <-->|"Start/signal"| T
+    T <-->|"Activity execution"| AG
+    T <-->|"Activity execution"| EN
+    AG -->|"Proposal"| API
+    AG --> GW
+    GW --> L
+    GW -. "Future adapter" .-> F
+    EN -->|"Recheck authorization"| API
+    EN -->|"Authorized handoff"| C
+    C -->|"Acknowledgements/feedback"| API
 ```
 
 **Important boundaries:**
 - The public website is separate from the authenticated operational dashboard; it does not need customer data access.
-- The Android app portrays a bank customer experience, not a mobile version of the bank staff dashboard. It requires customer-scoped access only.
+- The installable banking PWA portrays a fictional bank customer experience, not a mobile staff dashboard. It requires customer-scoped access; seeded bank data must not replace Core API-backed recommendations and feedback.
 - The Core Platform API owns authorized transactional state and applies final authorization. External compute services cannot directly grant approvals or send engagements on their own.
 - The Recommendation Service returns structured **Recommend / Clarify / Suppress** decisions and evidence. It does not own approval, policy or delivery records.
 - The Agent Worker proposes **whether/when/how**. The Engagement Worker handles scheduled handoffs and feedback, but must revalidate current permissions and policy before external delivery.
-- The Model Gateway may initially be a module inside the Agent service. A separate LLM serving runtime exists only when needed (for self-hosting); external hosted inference is an alternative.
+- The Model Gateway lives initially within the Agent service and calls hosted inference APIs; future self-hosted inference remains an adapter capability, not an initial deployment. Temporal manages durable workflow progression while Core API + PostgreSQL govern business authorization.
 - The diagram is logical: exact protocols, worker infrastructure, network trust boundaries and database topology remain undecided.
 
 ### 2.2 Deployment responsibilities and their justification
@@ -101,80 +97,82 @@ flowchart TB
 | --- | --- | --- |
 | **Marketing website** | Independent web application and deployment | Content, SEO, caching and release cadence differ from internal banking operations. |
 | **Banking dashboard** | Independent authenticated web application and deployment | Bank staff need rich, secured operations independent of public site releases. |
-| **Android banking app** | Independent native/cross-platform client and build | Customers use their bank's experience, not Cuebik employee accounts. |
+| **Banking PWA** | Independent installable Next.js web application | Demonstrates customer notifications and feedback without a native Android build; scoped API ensures only approved offers appear. |
 | **Core Platform API** | Independent backend deployment | Owns authoritative bank-scoped data and consequential policy/approval/engagement transitions. |
 | **Intelligence & Recommendation Service** | Independently testable Python service; separate deployment candidate | Feature processing and ML evaluation may require independent resources and model release cycles. |
 | **Agent orchestration** | Separate worker runtime; independent deployment if justified | Planning and optional language inference should not block interactive requests. |
-| **Engagement execution** | Separate worker runtime; independent deployment if justified | Scheduling, retries, acknowledgements and idempotency require dedicated execution control. |
-| **LLM inference** | Optional separate inference runtime, or approved hosted provider | Hardware sizing and model upgrades should not dictate releases of the Core API. |
+| **Engagement execution** | Python Temporal worker, independently runnable | Durable timers, retries, feedback and idempotency with final Core API checks before dispatch. |
+| **LLM inference** | Hosted provider initially; self-hosted support future-only | No current GPU/VPS operation; internal gateway keeps provider replacement possible. |
 | **Catalog, Customers, Policies and Approvals** | Modules in the Core Platform API initially | Shared transaction, version and authorization requirements make premature decomposition risky. |
 
 **A folder is not automatically a standalone service.** Meaningful independence requires an explicit contract, build/test configuration, well-defined data ownership and operational responsibility. No independent service may use another service's private database tables as an undocumented API.
 
-The Core API must preserve references to input evidence, product versions, policy versions, authorization decisions and status events. A scheduled or retried job must not send a message under stale consent, approval or product terms. The exact outbox, locking and idempotency mechanisms remain for evaluation.
+The Core API must preserve references to input evidence, product versions, policy versions, authorization decisions and status events. A scheduled or retried job must not send a message under stale consent, approval or product terms. Temporal Activity boundaries, outbox/locking, cancellation and idempotency still require detailed design. Temporal does not replace PostgreSQL as the authoritative business record.
 
-## 3. Proposed repository structure
+## 3. Approved monorepo organization
 
-One repository can support separate build and release pipelines. The layout below is a **proposal**, not a claim that these directories exist today.
+The **directory organization** is approved; this is the target structure, not a claim that application directories have already been scaffolded. Every deployable app/service is nested under `apps/`, grouped by category.
 
 ```text
 cuebik/
 ├── BRAND.md
-├── DESIGN.md
 ├── PRODUCT.md
 ├── ARCHITECTURE.md
 ├── apps/
-│   ├── marketing/            # Public website
-│   ├── dashboard/            # Bank operations dashboard
-│   └── bank-demo/            # Android customer experience
-├── services/
-│   ├── core-api/             # Transactional authority
-│   ├── intelligence/         # Feature and recommendation evaluation
-│   ├── agent/                # Agent orchestration + model gateway
-│   ├── engagement-worker/    # Scheduling and delivery adapters
-│   └── llm-inference/        # Optional self-hosted model server
+│   ├── web/
+│   │   ├── DESIGN.md          # Shared Cuebik design rules for marketing/dashboard
+│   │   ├── marketing/         # Next.js public website
+│   │   ├── dashboard/         # Next.js bank employee portal
+│   │   └── banking-pwa/       # Next.js fictional bank PWA
+│   └── backend/
+│       ├── api/               # Django + Django Ninja authoritative core
+│       ├── intelligence/      # Python customer features/recommendations
+│       ├── agent/             # Central Agent + Model Gateway
+│       └── engagement/        # Python Temporal engagement workers
 ├── packages/
-│   ├── contracts/            # Versioned schemas and generated clients
-│   └── ui/                   # Shared web-only UI components if useful
-├── infrastructure/           # Independent service deployment definitions
+│   ├── contracts/             # Shared, versioned API schemas and clients
+│   └── ui/                    # Shared Cuebik web UI where applicable
+├── infra/                     # Deployment configuration and Temporal environment
 └── assets/
-    └── brand/                # Approved SVG identity assets
+    └── brand/                 # Shared approved brand assets
 ```
 
-Each deployed application should be independently testable, configurable and releasable. Shared contracts must make API/worker boundaries explicit. Sharing code packages does not imply sharing the entire deployment. Scoped coding-agent files can be added once implementation decisions are approved; they are not part of this documentation change.
+**Document-location note:** The existing root-level `DESIGN.md` has **not yet moved**. It currently governs the Cuebik landing site and bank dashboard. When app folders are physically created, move it to `apps/web/DESIGN.md` and update all links together. It does not govern the fictional bank PWA's visual identity.
+
+Applications retain independent builds and deployments. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
 
 ## 4. Python and intelligence components
 
-**Working direction:** Python is the leading language for most of the backend because Cuebik processes structured banking signals, evaluates eligibility and develops reproducible ranking logic. This does **not** yet approve Django, FastAPI, a particular ML model or any individual deployment framework.
+**Approved direction:** Python is the primary backend and intelligence language; Django + Django Ninja is selected for the transactional Core API. ML, agent and provider implementation details still require evaluation.
 
 | System | Language/runtime direction | Reason |
 | --- | --- | --- |
-| Core Platform API | Python candidate | Strong data-domain, API, transaction and ML-adjacent ecosystem. |
+| Core Platform API | Python with Django + Django Ninja | Mature transactions, domain models, authentication foundation and typed APIs. |
 | Customer ingestion & feature engineering | Python numerical/data ecosystem | Normalize authorized financial activity and track facts, inferences, freshness and missing values. |
 | Eligibility & Recommendation Engine | Python rules and ranking | Hard product restrictions must remain separate from statistical relevance. |
 | Training & evaluation | Python ML tooling | Supports repeatable baselines and measured model comparisons; learned ranking requires appropriate labels. |
 | Central Agent | Python orchestration, optional LLM assistance | Coordinates structured proposals and model calls without giving the model authority. |
 | Policies & Automation | Deterministic, versioned rule evaluation | Enforce **Automate / Review / Withhold** independent of generative model output. |
-| Engagement execution | Background worker (Python candidate) | Handle scheduled sends and feedback while protecting authorization and delivery correctness. |
-| LLM serving | Dedicated model runtime or hosted endpoint | Inference compute, model lifecycle and security differ from ordinary backend APIs. |
-| Client applications | Separate technology evaluation | Browser and Android requirements are distinct from server-side processing. |
+| Engagement execution | Python Temporal Activity workers | Durable scheduling and recovery with final Core API authorization before delivery. |
+| LLM serving | Hosted model API via Model Gateway; future self-hosted adapter | Avoids initially operating GPU inference infrastructure. |
+| Client applications | Next.js + TypeScript (marketing, dashboard, banking PWA) | Three independently deployable web experiences, each with its own identity and access model. |
 
 **Do not equate the Recommendation Engine with an LLM.** It must evaluate authorized customer evidence against currently active products, eligibility restrictions and potentially a ranking model, returning **Recommend / Clarify / Suppress** and evidence. The agent may assist with proposals or wording; neither model output nor an earlier recommendation authorizes contact.
 
 ## 5. Model Gateway and provider portability
 
-**Architectural requirement:** Cuebik must be able to replace an LLM or hosting provider without rewriting the Central Agent, policy evaluator or engagement workflow. The internal Model Gateway presents a stable interface regardless of whether selected model weights run on our infrastructure, a managed dedicated endpoint or another permitted hosted provider.
+**Approved approach:** The Central Agent communicates through its internal Model Gateway with **hosted model APIs initially**. Support self-hosted open-weight models in the gateway contract for a later phase, but do not provision GPU/VPS model-serving infrastructure now. gpt-oss and Qwen are evaluation candidates; no specific production provider or failover path has passed acceptance testing.
 
 ```mermaid
 flowchart TD
     AG["Central Agent"] --> G["Model Gateway<br/>Stable task-specific contract"]
     G --> P{"Configured inference backend"}
-    P --> S["Self-hosted open-weight model"]
-    P --> H["Hugging Face hosted inference"]
-    P --> O["Other approved inference provider"]
-    S --> V["Schema + semantic validation"]
-    H --> V
+    P --> H["Hosted inference: Hugging Face / other"]
+    P --> O["Hosted inference: Groq / other"]
+    P -. "Future only" .-> S["Self-hosted open-weight model"]
+    H --> V["Schema + semantic validation"]
     O --> V
+    S -.-> V
     V --> R["Deterministic Policy Engine"]
     R --> A["Authorized workflow only"]
 ```
@@ -209,24 +207,22 @@ Relevant official references:
 - Hugging Face Endpoint security: https://huggingface.co/docs/inference-endpoints/security
 - vLLM compatible API/security: https://docs.vllm.ai/en/latest/serving/online_serving/openai_compatible_server/
 
-**Decision state:** Hugging Face is a candidate for discovery, testing and optional inference—not a required provider. No specific model, hosting provider, fine-tuning approach or GPU deployment is approved.
+**Decision state:** Hosted inference is approved initially, with gpt-oss and Qwen as evaluation candidates. Hugging Face remains an optional model discovery/inference platform. Actual provider, pricing, privacy terms, model/version and failover still need validation; self-hosting is deferred.
 
 ### 5.3 Model and customer-data safeguards
 
 External inference changes where bank-derived data is processed. Apply data minimization; avoid raw credentials, full banking histories or sensitive identifiers for message drafting; assess actual service contracts, retention, routing, residency and access controls before using real data. Self-hosted inference still requires model provenance, dependency and runtime security reviews. Invalid/unavailable model output fails safely, without assuming permission.
 
-## 6. Evaluation status and next steps
+## 6. Confirmed decisions and remaining work
 
-**Agreed direction for design discussion:** Separately deliverable marketing/dashboard/Android apps; a core transactional authority; independently runnable intelligence, agent and engagement work; deterministic authorization; provider-neutral model access.
+**Confirmed:** PostgreSQL; Python + Django/Django Ninja for Core API; deterministic eligibility and bank policy checks; Next.js/TypeScript independently deployed marketing, dashboard and **installable banking PWA**; application-managed staff authentication; an internal Model Gateway; **hosted LLM inference initially** with gpt-oss and Qwen candidates; **Temporal durable workflows with Python workers**, local development server and Temporal Cloud intended for managed orchestration; OpenTelemetry instrumentation; and monorepo directories `apps/`, `packages/`, `infra/`, `assets/`.
 
-**Not finalized:** Exact technology stack, backend framework, frontend/mobile tools, service topology, queue/broker choice, database deployment, machine-learning and language models, hosted versus self-hosted inference, infrastructure provider and cost/performance targets.
+**Unresolved details that must not be presented as implemented:** Temporal Cloud account, regional suitability, pricing, usage budget, workflow histories/retry/cancellation design; worker hosting; data/permission contracts; actual model/provider selection and evaluation; ML baseline/training evidence; authentication security settings; hosting vendors; secrets, telemetry backend, recovery and SLOs.
 
-Before approving implementation choices, evaluate:
-1. **Workflow correctness:** consent/policy/product changes after approval, concurrent decisions, retries, duplicate delivery, recovery and auditability.
-2. **Recommendation quality:** labeled evidence, representative scenarios, eligibility accuracy, explanation quality and learned-versus-baseline ranking.
-3. **Model portability:** provider/model conformance, licensing, data handling, cost, latency and fallback behaviour.
-4. **Workload and scaling:** bank count, customers, products, event frequency, evaluation throughput and latency expectations.
-5. **Interfaces and security:** service data ownership, typed/versioned contracts, organization isolation, authentication and private network boundaries.
-6. **Operations:** deployments, secrets, recovery, monitoring, regional requirements and engineering team expertise.
+**Customer demo guarantee:** A PWA may use seeded account/transaction screens, but must retrieve approved recommendations via authorized API endpoints and report actual customer feedback. Approval, send, delivery and viewing remain distinct facts.
 
-Promote proposals to binding technical decisions only after explicit review and validation.
+**Temporal guarantee boundary:** Temporal persists workflow progression; it does not independently authorize an engagement, make external dispatch exactly once, or replace PostgreSQL business state. Workers must verify current consent, catalog terms, policy and approval immediately before handoff and protect against retries/duplicates.
+
+**Repository migration:** The current root `DESIGN.md` stays until the new app folders are created. Move it to `apps/web/DESIGN.md` and update references together at scaffolding time. Do not confuse the Cuebik design system with the fictional bank's PWA styling.
+
+PR remains a draft for architecture completion and validation.
