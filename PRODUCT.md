@@ -1,6 +1,6 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.6  
+**Version:** 0.1.7  
 **Status:** Draft for product review  
 **Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
@@ -147,6 +147,8 @@ Four functional connection areas:
 - **Banking App** presents in-app product information; **SMS** presents a simulated text-message thread; **Email** presents a simulated email inbox and message view. Distinguish simulated channel dispatch and simulator acknowledgements from real carrier/SMTP delivery.
 - Evidence-backed user actions (such as opening a message, dismissing an offer, clicking for details or requesting information) return through customer-scoped API endpoints and are recorded against the originating engagement. UI display alone must not be treated as a confirmed customer view or proof of real-world delivery.
 - Cuebik's dashboard reads the same authoritative backend events, enabling an end-to-end demonstration of recommendation evidence, approval state, channel selection, simulated dispatch, and feedback. No isolated UI-only counters or fabricated delivery state may replace this record.
+
+**Approved CSV-to-simulator delivery boundary:** All validated CSV-imported fictional customers can be analyzed, matched and shown in the bank dashboard, with qualifying Central Agent proposals, **without needing a banking-simulator profile**. A CSV-only customer does **not** gain a simulated Banking App/SMS/Email inbox by being imported. The simulator delivery adapter must find an existing, authorized recipient linked to the **same bank-scoped customer reference**, not guess from matching names. Without such a recipient, record intelligence and agent proposals accurately but do **not** mark an absent simulated inbox as Sent or Delivered. A separately configured real outbound adapter, where enabled later, follows its own authorized destination and actual delivery evidence. The CSV import itself never authorizes or proves contact.
 
 **Demonstration integrity:** Any simulated delivery/feedback must be **explicitly labeled simulated**. Failed approvals, missing permissions, stale terms, rejected requests, suppressed matches, and withheld engagements must never produce an inbox item. The simulator cannot bypass pre-dispatch checks or fabricate a successful customer outcome.
 
@@ -374,7 +376,7 @@ A fictional Harbourline Bank customer performs a **simulated** savings deposit i
 
 ### Scenario I — CSV intelligence without simulator registration
 
-A bank employee imports fictional customer records from a CSV through the working dashboard. The Core API validates and saves scoped customer evidence, then Customer Intelligence and the Recommendation Engine evaluate eligible products. Bank staff can inspect actual results and agent activity even for customers with **no banking-simulator session**. Recorded, bank-supplied contact permissions and available delivery capabilities still govern any later outbound engagement; a CSV import or recommendation alone never claims that a message reached a customer. 
+A bank employee imports ten (or more) fictional customer records from a CSV through the working dashboard. The Core API validates and saves scoped evidence; Customer Intelligence and the Recommendation Engine evaluate each customer on available facts and bank-defined product criteria. Staff can inspect real recommendation results and, for qualifying recommendations, Central Agent proposals even when those customers have **no banking-simulator profile or session**. A customer without a linked authorized simulated recipient does **not** receive a fictional Banking App/SMS/Email inbox item, and the dashboard does not claim a simulated send or delivery. If a permitted simulator recipient is explicitly linked using the correct bank-scoped customer reference, only separately authorized engagement workflows can deliver to that recipient. A CSV upload or recommendation alone never establishes delivery. Real outbound adapters, if enabled later, require their own verified destinations and delivery evidence.
 
 ### Scenario J — Credit opportunity requires human review
 
