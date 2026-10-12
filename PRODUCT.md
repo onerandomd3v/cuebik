@@ -1,12 +1,12 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.2  
+**Version:** 0.1.3  
 **Status:** Draft for product review  
 **Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
 **Tagline:** Make every recommendation count.
 
-> **Document authority:** This file defines what Cuebik is, the problems it solves, the users it serves, its intended capabilities, its business rules, and how its product workflows behave. It is the product source of truth, not a technology selection, deployment specification, API reference, or assertion that a capability is already implemented. `BRAND.md` governs identity and language; `DESIGN.md` governs UI implementation. Technical decisions belong in `ARCHITECTURE.md` after evaluation.
+> **Document authority:** This file defines what Cuebik is, the problems it solves, the users it serves, its intended capabilities, its business rules, and how its product workflows behave. It is the product source of truth, not a technology selection, deployment specification, API reference, or assertion that a capability is already implemented. `BRAND.md` governs identity and language; `DESIGN.md` governs UI implementation. Approved technical decisions and unresolved engineering choices belong in `ARCHITECTURE.md`.
 
 ---
 
@@ -221,7 +221,7 @@ The ambient connected-intelligence visualization is a visual summary of product 
 2. A governing **Withhold** condition prevents engagement.
 3. Any applicable **Review** mandate takes priority over a permissive **Automate** match.
 4. **Automate** applies only where all other required conditions pass and an active policy permits it.
-5. No applicable authorization, unknown permission, or conflicting evidence must **not** result in automatic dispatch.
+5. Missing authorization, unknown communication permission, or conflicting evidence must **never permit automatic dispatch**.
 6. Current restrictions and authorization validity are rechecked before dispatch.
 
 Policies have configuration statuses (e.g., Draft, Active, Disabled, Archived) separate from their Automate/Review/Withhold decision. Creating, previewing, simulating, or saving a draft does not activate it. Changes to active policies are versioned, tested, and authorized before becoming effective. Previously withheld or rejected engagements are not silently sent when rules change. Reusable templates are editable **draft starting points**, not pre-authorized policy deployments.
@@ -240,7 +240,7 @@ Approval is an authorization event: **Approved ≠ Sent ≠ Delivered**. A rejec
 
 **Purpose:** Show what happened to an authorized customer communication through bank channels.
 
-Supported customer-facing channels are **Banking App**, **SMS**, and **Email**. A relationship-manager internal task is not itself an outbound customer channel. WhatsApp is not in Cuebik's defined channel set.
+Supported customer-facing channels are **Banking App**, **SMS**, and **Email**. A relationship-manager internal task is not itself an outbound customer channel.
 
 The module includes a directory, channel-level metrics, message preview, status history, delivery feedback, permitted customer interaction events, and references back to the recommendation, agent decision, approval, and originating product.
 
@@ -448,7 +448,7 @@ An incomplete feature must be described as planned or illustrative rather than p
 
 ## 12. Dependencies and product decisions to resolve
 
-These are **open product decisions** requiring explicit agreement before detailed technical specifications; no framework or vendor is selected here.
+These are **unresolved product-level decisions** requiring explicit agreement before their detailed contracts are finalized. Approved technologies and remaining technical choices are tracked in `ARCHITECTURE.md`.
 
 1. **Initial product families:** Confirm the specific savings, fixed-deposit, and SME/credit product types needed for the first curated catalog, with genuine fictional terms and eligibility rules.
 2. **Customer signal contract:** Define exactly which synthetic financial/behavioural summaries, freshness rules, and stated preferences the evaluation will accept.
@@ -474,7 +474,7 @@ These are **open product decisions** requiring explicit agreement before detaile
 | Product identity, messaging, logo, and brand vocabulary | [`BRAND.md`](BRAND.md) |
 | UI design system, components, themes, and layouts | [`DESIGN.md`](DESIGN.md) |
 | Product intent, behaviour, terminology, scope, and acceptance scenarios | **This `PRODUCT.md`** |
-| Selected technology, boundaries, data contracts, architecture, and deployment | Future `ARCHITECTURE.md` and its referenced contracts |
+| Selected technology, boundaries, data contracts, architecture, and deployment | [`ARCHITECTURE.md`](ARCHITECTURE.md) and its referenced contracts |
 | Implemented behaviour | Tests and running software, checked against approved product and architecture specifications |
 
 Screens generated for exploration provide valuable design references, but fictional labels, arbitrary KPI values, compliance badges, product names, and conflicting states in those screens do **not** automatically become product requirements.
@@ -504,4 +504,4 @@ The Product Catalog, Integrations, organization workspace, approvals, and dashbo
 - **Dispatch:** A controlled request for bank-owned customer communication infrastructure to send an authorized message.
 - **Delivery acknowledgement:** Evidence of delivery from an appropriate supporting source; distinct from acceptance or sending.
 - **Organization workspace:** Bank-scoped interface and data context for authorized bank employees.
-- **Synthetic banking app:** Separate fictional bank-customer application for illustrating the authorized delivery experience without representing a real bank integration.
+- **Banking simulator PWA:** Fictional bank-customer virtual smartphone with simulated Banking App, SMS, and Email views, using authorized backend records without representing a real bank integration.
