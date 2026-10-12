@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.1  
+**Version:** 0.4.2  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -22,6 +22,7 @@ The team has approved several technologies and architectural directions. Remaini
 | **Central Agent** | Structured Python orchestration + internal Model Gateway | Coordinates whether/when/how with model-independent typed proposals; model never authorizes engagement. | **Approved direction**; framework pending |
 | **Policy evaluator** | Versioned deterministic rules | Produces testable Automate / Review / Withhold decisions independent of generated language. | **Approved approach**; rule schema pending |
 | **Durable workflows** | Temporal Python SDK, Temporal Cloud intended managed control plane | Persists waiting approvals, timers, retries and worker progress across failures without using HTTP requests as durable state. PostgreSQL remains business authority. | **Approved**; cloud pricing and operations pending |
+| **Outbound provider integrations** | [Africa's Talking](https://africastalking.com/) for SMS; [SendByte](https://sendbyte.africa/) for Email | Initial external adapters behind Cuebik-owned channel contracts; the banking simulator continues to use mock inbox adapters. | **Initial providers selected**; integrations and production suitability unverified |
 | **Web frontend** | React + TypeScript (Next.js) | Reusable UI and typed data models across independently deployed web applications. | **Approved** |
 | **Web framework** | Next.js + TypeScript | Powers separate deployable marketing, staff dashboard and banking PWA applications with one web ecosystem. | **Approved** |
 | **Customer banking demo** | Next.js installable PWA | Demonstrates a fictional bank experience on supported Android browsers without native Android infrastructure; real recommendation state comes from the Core API. | **Approved** |
@@ -181,6 +182,24 @@ The Core API should authenticate the demo customer session and derive bank/custo
 - A retry or repeated UI/API event does not duplicate the simulated inbox message; a changed permission or paused product before dispatch blocks it.
 - Opening or acting on a simulator message results in a precisely attributed, backend-persisted feedback event visible on the Cuebik dashboard. Only evidence-backed lifecycle states and explicit simulated delivery status are displayed.
 
+### 2.6 Provider-agnostic external integrations
+
+**Approved principle:** Cuebik's business logic must be independent of external service vendors. Recommendation eligibility, Central Agent proposals, policy decisions, approvals, Temporal workflows and customer-facing event history use **Cuebik-owned contracts**. Vendor SDK calls and provider-specific fields belong in replaceable adapters; changing a provider must not require rewriting authorization rules or customer journeys.
+
+| Channel | Selected initial external provider | Status |
+| --- | --- | --- |
+| **SMS** | [Africa's Talking](https://africastalking.com/) | Selected for initial adapter implementation; account setup, sending capability, regional coverage, pricing and webhook behavior require validation. |
+| **Email** | [SendByte](https://sendbyte.africa/) | Selected for initial adapter implementation; account setup, sender verification, API compatibility, pricing and webhook behavior require validation. |
+| **Banking App** | Bank-owned integration in a future real deployment; simulator-owned in-app inbox initially | No external bank integration is implemented or authorized. |
+
+**Delivery contract:** The Core API owns engagement identifiers, tenant/customer scope, chosen channel, approved message version, permissions and state transitions. A channel adapter accepts an authorized delivery request and returns a normalized handoff outcome; authenticated provider callbacks contribute distinct sending, delivery or failure evidence when genuinely supported. Provider message IDs, credentials, payload conventions and error codes remain behind the adapter. Retries require idempotency/reconciliation, and provider acknowledgements must not be promoted to confirmed delivery without supporting evidence.
+
+**Simulation versus real delivery:** The virtual phone uses simulated Banking App, SMS and Email adapters backed by persistent test records. Simulation is the default demo behavior; it must never send real SMS/email or claim a carrier/mailbox delivery. Real-provider routing requires explicitly enabled, configured and authorized execution paths with final pre-dispatch policy checks.
+
+**Portability scope:** The Model Gateway already isolates hosted LLM providers. Apply the same vendor-boundary principle to hosting, storage and observability integrations where a substitutable external provider exists, without implying that swapping vendors is automatic or free. **Django + Django Ninja, PostgreSQL and Temporal remain selected technologies**, not pending choices to replace for the sake of abstract portability.
+
+**Acceptance criterion:** Each channel supports a contract-testable mock implementation and a provider adapter that produces the same normalized business states. Switching the configured provider must not bypass consent, policy, approval, message-version checks or duplicate-dispatch protection.
+
 ## 3. Approved monorepo organization
 
 The **directory organization** is approved; this is the target structure, not a claim that application directories have already been scaffolded. Every deployable app/service is nested under `apps/`, grouped by category.
@@ -287,5 +306,6 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 3. **Intelligence and agent evaluation:** Choose the feature-processing and ranking baseline; evaluate evidence quality and candidate ML tooling. Test gpt-oss and Qwen via hosted providers using Cuebik-specific accuracy, schema, latency, privacy and cost criteria before selecting active models and fallback behavior.
 4. **Authentication and service boundaries:** Specify employee sessions, credentials, authorization roles and MFA needs; define versioned inter-service contracts, tenant isolation, data ownership and audit records.
 5. **Infrastructure and operations:** Select hosting/regions for Next.js apps, Core API, intelligence and workers, plus managed PostgreSQL. Specify secrets, backups, tracing storage, recovery procedures, operational alerts and measurable service objectives.
+6. **SMS and Email provider adapters:** Validate Africa's Talking and SendByte API access, sender identities, geographic support, security/data handling, cost and supported status callbacks. Finalize Cuebik's provider-neutral dispatch/feedback contract and simulation-versus-live configuration before implementing real delivery.
 
 **Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
