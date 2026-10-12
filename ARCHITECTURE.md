@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.2  
+**Version:** 0.4.3  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -19,7 +19,8 @@ The team has approved several technologies and architectural directions. Remaini
 | **Customer feature processing** | Python; Polars/pandas/NumPy to evaluate | Converts permitted banking summaries into traceable customer features with freshness/uncertainty. | **Python approved**; libraries pending |
 | **Recommendation Engine** | Python eligibility rules + explainable ranking | Keeps mandatory restrictions separate from relevance, returns traceable Recommend / Clarify / Suppress outcomes. | **Approved approach**; ML tooling pending |
 | **ML tooling** | scikit-learn baseline; LightGBM if useful | Supports repeatable evaluation without claiming that synthetic labels establish real-world quality. | **Candidates** |
-| **Central Agent** | Structured Python orchestration + internal Model Gateway | Coordinates whether/when/how with model-independent typed proposals; model never authorizes engagement. | **Approved direction**; framework pending |
+| **Central Agent** | Structured Python orchestration + internal Model Gateway | Coordinates whether/when/how with model-independent typed proposals; model never authorizes engagement. | **Approved direction**; orchestration details pending |
+| **Initial LLM family** | gpt-oss through hosted inference | Bounded Central Agent proposal and language tasks; Qwen is an optional alternative, not a mandatory second model. | **gpt-oss selected**; exact model, provider and evaluation pending |
 | **Policy evaluator** | Versioned deterministic rules | Produces testable Automate / Review / Withhold decisions independent of generated language. | **Approved approach**; rule schema pending |
 | **Durable workflows** | Temporal Python SDK, Temporal Cloud intended managed control plane | Persists waiting approvals, timers, retries and worker progress across failures without using HTTP requests as durable state. PostgreSQL remains business authority. | **Approved**; cloud pricing and operations pending |
 | **Outbound provider integrations** | [Africa's Talking](https://africastalking.com/) for SMS; [SendByte](https://sendbyte.africa/) for Email | Initial external adapters behind Cuebik-owned channel contracts; the banking simulator continues to use mock inbox adapters. | **Initial providers selected**; integrations and production suitability unverified |
@@ -85,6 +86,7 @@ flowchart TB
 
 **Important boundaries:**
 - The public website is separate from the authenticated operational dashboard; it does not need customer data access.
+- **The Cuebik dashboard and backend are real, working product functionality to build**, not mock screens: bank staff create and maintain product catalog records, inspect customer intelligence and recommendation evidence, manage bank policies, review exact messages, and track genuine system state persisted by the Core API in PostgreSQL. Initial banking data is synthetic; dashboard interactions and processing are not fabricated.
 - The installable banking PWA portrays a fictional Harbourline Bank customer experience, not a mobile staff dashboard. It requires customer-scoped access; seeded bank data must not replace Core API-backed recommendations and feedback. On desktop, a centered phone shell contains Banking App, SMS, Email and Notifications views; on real mobile screens the simulator uses the mobile viewport without a second phone frame.
 - The Core Platform API owns authorized transactional state and applies final authorization. External compute services cannot directly grant approvals or send engagements on their own.
 - The Recommendation Service returns structured **Recommend / Clarify / Suppress** decisions and evidence. It does not own approval, policy or delivery records.
@@ -200,6 +202,16 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 **Acceptance criterion:** Each channel supports a contract-testable mock implementation and a provider adapter that produces the same normalized business states. Switching the configured provider must not bypass consent, policy, approval, message-version checks or duplicate-dispatch protection.
 
+### 2.7 Functional platform versus synthetic banking inputs
+
+**First-release requirement:** Cuebik's bank-facing dashboard, product catalog, Core API, customer-intelligence processing, recommendation evaluation, Central Agent coordination, bank-policy enforcement, approval workflow, Temporal execution, and audit/feedback history must **function end to end against authoritative backend records**. The fictional banking environment supplies permitted **synthetic customer/account/activity data**, and the virtual phone provides **simulated customer delivery views**. Do not substitute UI-only recommendations, fake dashboard totals, fixed agent outputs, or animated message delivery for actual application behavior.
+
+**Input boundary:** The first implementation can receive fictional customer facts and transaction events from the banking simulator. **CSV customer-data import is a candidate initial ingestion path, not yet a finalized requirement**; if selected, it should pass through the same validated bank-scoped ingestion and customer-intelligence path. Bank employees must be able to create and manage real product-catalog records in the dashboard. Real bank feeds and real money movement are not part of this initial demonstration.
+
+**Proposed trigger and timing model (details not yet finalized):** On permitted new/changed customer data or catalog changes, evaluate affected customer-product candidates. A scheduled re-evaluation can also reconsider stored evidence at a configured cadence. **Only a qualifying Recommend outcome** can initiate Central Agent engagement planning; Clarify and Suppress must not generate a marketing handoff. The agent proposes whether to engage, an allowed channel and an appropriate time window from available evidence and bank restrictions; **it does not claim to know a mathematically optimal send time**. Deterministic policy and, where required, a human reviewer authorize the action; Temporal handles any permitted waiting and dispatch checks. No continuously running LLM loop is required.
+
+**Customer Intelligence is a data-processing capability, not inherently a graph database.** It preserves observed facts, qualified inferences, unknowns and evidence links. A dashboard evidence/relationship graph could visualize those records, but an interactive knowledge graph and separate graph database have **not** been selected as first-release requirements.
+
 ## 3. Approved monorepo organization
 
 The **directory organization** is approved; this is the target structure, not a claim that application directories have already been scaffolded. Every deployable app/service is nested under `apps/`, grouped by category.
@@ -245,7 +257,7 @@ Training tools, agent libraries, precise internal protocols and state coordinati
 
 ## 5. Model Gateway and provider portability
 
-**Approved approach:** The Central Agent communicates through its internal Model Gateway with **hosted model APIs initially**. Support self-hosted open-weight models in the gateway contract for a later phase, but do not provision GPU/VPS model-serving infrastructure now. gpt-oss and Qwen are evaluation candidates; no specific production provider or failover path has passed acceptance testing.
+**Approved approach:** The Central Agent communicates through its internal Model Gateway with **hosted model APIs initially**. **gpt-oss is the selected starting model family**; the exact variant and serving provider are not finalized. **Groq is the first provider candidate to evaluate**, not an approved deployment or guaranteed performance choice. Qwen remains an optional alternative for comparative testing, **not a required second model or automatic fallback**. Support self-hosted open-weight models in the gateway contract for a later phase, but do not provision GPU/VPS inference infrastructure now. The model may help prepare structured proposals and message wording; it cannot establish eligibility or authorize a dispatch.
 
 ```mermaid
 flowchart TD
@@ -291,7 +303,7 @@ Relevant official references:
 - Hugging Face Endpoint security: https://huggingface.co/docs/inference-endpoints/security
 - vLLM compatible API/security: https://docs.vllm.ai/en/latest/serving/online_serving/openai_compatible_server/
 
-**Decision state:** Hosted inference is approved initially, with gpt-oss and Qwen as evaluation candidates. Hugging Face remains an optional model discovery/inference platform. Actual provider, pricing, privacy terms, model/version and failover still need validation; self-hosting is deferred.
+**Decision state:** Hosted inference and the **gpt-oss** starting model family are selected; **Groq** is a candidate hosted provider to validate. **Qwen** remains an optional alternative, not a committed dependency or automatic fallback. Hugging Face is optional for model discovery/inference. Exact model revision, provider, privacy terms, cost, benchmarks and failure handling remain to be validated; self-hosting is deferred.
 
 ### 5.3 Model and customer-data safeguards
 
@@ -303,9 +315,10 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 
 1. **Workflow reliability:** Define Temporal Workflow/Activity boundaries, human approval signals, cancellation, timeout/retry policies, idempotency, transactional outbox/reconciliation and the pre-dispatch authorization boundary. Validate Temporal Cloud region, retention, pricing and separately hosted Python workers.
 2. **Simulator contracts:** Finalize the bank-scoped synthetic event schema, demo-customer authentication, approved inbox records, per-channel acknowledgements, feedback provenance and duplicate-event handling. Acceptance scenarios are specified in [§2.5](#25-integration-acceptance-checks).
-3. **Intelligence and agent evaluation:** Choose the feature-processing and ranking baseline; evaluate evidence quality and candidate ML tooling. Test gpt-oss and Qwen via hosted providers using Cuebik-specific accuracy, schema, latency, privacy and cost criteria before selecting active models and fallback behavior.
+3. **Intelligence and agent evaluation:** Choose feature-processing and ranking baselines, then evaluate evidence quality and any ML tooling. Benchmark the selected **gpt-oss** family through hosted inference (Groq first for evaluation) on Cuebik-specific proposal quality, schema compliance, latency, privacy and cost; optionally compare Qwen. The production model version, provider and failure behavior are not yet approved.
 4. **Authentication and service boundaries:** Specify employee sessions, credentials, authorization roles and MFA needs; define versioned inter-service contracts, tenant isolation, data ownership and audit records.
 5. **Infrastructure and operations:** Select hosting/regions for Next.js apps, Core API, intelligence and workers, plus managed PostgreSQL. Specify secrets, backups, tracing storage, recovery procedures, operational alerts and measurable service objectives.
-6. **SMS and Email provider adapters:** Validate Africa's Talking and SendByte API access, sender identities, geographic support, security/data handling, cost and supported status callbacks. Finalize Cuebik's provider-neutral dispatch/feedback contract and simulation-versus-live configuration before implementing real delivery.
+6. **SMS and Email provider adapters:** Africa's Talking and SendByte are the selected initial providers. Validate their adapter integrations and normalized feedback behavior during implementation; demo inboxes remain simulated by default.
+7. **Customer ingestion and visualization:** Decide whether CSV customer imports are part of the first release alongside simulator events, and whether to implement an interactive evidence graph. Neither requires a new database or external AI dependency by default.
 
 **Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
