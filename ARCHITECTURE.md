@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.5  
+**Version:** 0.4.6  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -258,6 +258,52 @@ The selected backend language and framework are recorded in [§1](#1-technology-
 - **Durable execution (`apps/backend/engagement` with Temporal):** Activities perform I/O, scheduled operations and channel handoffs after a final Core API authorization check. Temporal tracks workflow progress; PostgreSQL remains the business source of truth. Retries and external side effects require explicit idempotency and evidence-based status updates.
 
 Training tools, agent libraries, precise internal protocols and state coordination are implementation decisions, not additional approved stack dependencies.
+
+### 4.1 Simple mental model: from customer insight to engagement
+
+**Cuebik has two intelligence layers, followed by bank-controlled authorization and execution.** This is a responsibility map—not five separately deployed services.
+
+| Responsibility | The question it answers | What it does |
+| --- | --- | --- |
+| **Layer 1 — Customer Intelligence** | **What do we know about the customer?** | Organizes permitted banking facts, qualified inferences, unknowns, source evidence and freshness. |
+| **Layer 1 — Recommendation Engine** | **What relevant, eligible product could fit?** | Applies bank-defined eligibility first, then explainable ranking; returns **Recommend / Clarify / Suppress**. |
+| **Layer 2 — Central Agent + gpt-oss** | **Should we propose engagement, when, and how?** | Coordinates an eligible recommendation; uses the selected gpt-oss model through the Model Gateway for bounded proposal reasoning, explanations and message drafting, with validated outputs. |
+| **Bank Policy & Approvals** | **Is this proposed engagement permitted?** | Enforces **Automate / Review / Withhold**, existing bank-managed communication restrictions and human approval where required. |
+| **Temporal + channel adapters** | **How is an authorized communication executed and tracked?** | Waits, retries and rechecks authorization before the selected Banking App, SMS or Email handoff; records supported outcomes and feedback. |
+
+**Remember:** *Customer Intelligence understands the customer. The Recommendation Engine finds the product. The Central Agent plans the engagement. Bank Policy decides what is permitted. Temporal and channel adapters execute and track the authorized communication.*
+
+**Model boundary:** Layer 1 **does not require a language model** to function: Python feature processing, deterministic eligibility and explainable ranking form the initial baseline (any later learned ranking is a separate evaluated choice). Layer 2 **uses gpt-oss as its selected language-model component** for bounded engagement-planning tasks; the Central Agent is still Python-controlled orchestration, not a model with independent authority. An unavailable or invalid model result cannot authorize contact. The agent proposes a suitable, evidence-supported contact time—not a proven optimal send time. The same model may support multiple agent tasks; no second LLM is required.
+
+**End-to-end decision and engagement flow** (complements the simulator-specific flow in [§2.3](#23-virtual-smartphone-simulator-and-cuebik-end-to-end-flow)):
+
+```mermaid
+flowchart TD
+    CSV["Bank dashboard: customer CSV import"] --> CORE["Core API + PostgreSQL<br/>Validated bank-scoped evidence"]
+    PWA["Fictional banking PWA: customer activity"] --> CORE
+    CORE --> INTEL["Layer 1: Customer Intelligence<br/>Facts, inferences, unknowns"]
+    INTEL --> REC["Recommendation Engine<br/>Eligibility, then explainable ranking"]
+    CAT["Bank-managed product catalog"] --> REC
+    REC --> OUTCOME{"Recommendation outcome?"}
+    OUTCOME -->|"Clarify"| CLARIFY["Record evidence gap<br/>No marketing handoff"]
+    OUTCOME -->|"Suppress"| SUPPRESS["Record exclusion<br/>No marketing handoff"]
+    OUTCOME -->|"Recommend"| AGENT["Layer 2: Central Agent + gpt-oss<br/>Whether, when, how, message"]
+    AGENT --> PROPOSAL["Validated engagement proposal<br/>Channel, time, content, rationale"]
+    PROPOSAL --> POLICY{"Bank Policy Engine"}
+    POLICY -->|"Withhold"| STOP["Record withheld<br/>No dispatch"]
+    POLICY -->|"Review"| REVIEW{"Authorized bank employee<br/>Approve exact message?"}
+    REVIEW -->|"Rejected"| REJECT["Record rejection<br/>No dispatch"]
+    REVIEW -->|"Approved"| TEMP["Temporal workflow<br/>Wait, retry, recover"]
+    POLICY -->|"Automate"| TEMP
+    TEMP --> FINAL{"Final Core API<br/>authorization checks pass?"}
+    FINAL -->|"No"| BLOCK["Hold or block<br/>No dispatch"]
+    FINAL -->|"Yes"| CHANNEL["Selected delivery adapter<br/>Banking App / SMS / Email"]
+    CHANNEL --> FEEDBACK["Supported send/delivery evidence<br/>and customer feedback"]
+    FEEDBACK --> CORE
+    CORE --> DASH["Bank dashboard<br/>Recommendations, agent activity, approvals, outcomes"]
+```
+
+Both input routes trigger **real backend processing against initial synthetic banking data**. Engagement is **never automatic merely because a recommendation exists**; a valid bank authorization is required. In the first demonstration, channel delivery is to labeled **simulated inboxes** unless a separately authorized real-provider path has been enabled. Dashboard values and activity must reflect persisted backend state.
 
 ## 5. Model Gateway and provider portability
 
