@@ -1,8 +1,8 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.0  
+**Version:** 0.1.1  
 **Status:** Draft for product review  
-**Updated:** 11 October 2026  
+**Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
 **Tagline:** Make every recommendation count.
 
@@ -16,7 +16,7 @@ Cuebik is a banking intelligence and engagement platform that helps banks unders
 
 Banks connect authorized systems and data to Cuebik and manage their institution's activity from an isolated organization workspace. Cuebik combines permitted customer signals with bank-defined product information to evaluate potential matches, coordinate an appropriate next action, and apply bank-controlled communication rules. Authorized engagement instructions reach customers through the bank's existing channels, and resulting delivery or interaction feedback returns to Cuebik where available.
 
-**Cuebik is a bank-facing platform, not a consumer bank.** Bank customers do not sign into Cuebik. They experience relevant recommendations through their own bank's mobile app, SMS, or email. A separate synthetic-data banking application may be used to demonstrate this customer experience without implying a real bank integration.
+**Cuebik is a bank-facing platform, not a consumer bank.** Bank customers do not sign into Cuebik. They experience relevant recommendations through their own bank's mobile app, SMS, or email. A separate synthetic-data banking Progressive Web App (PWA) may demonstrate the customer experience without implying a live bank integration.
 
 ### 1.1 Product promise
 
@@ -405,7 +405,7 @@ This section distinguishes the **defined full experience** from the **initial fu
 - At least one real, stateful authorized human approval workflow.
 - Controlled engagement instruction routing to a bank-channel demonstration adapter, with accurate status and feedback events.
 - Dashboard modules connected to shared records, not unrelated screen-specific fixtures.
-- A separate synthetic-data Android banking experience displaying only appropriate bank-authorized recommendation content.
+- A separate installable synthetic-data banking PWA (Next.js) displaying only appropriately authorized, Core API-backed recommendation content and sending supported customer feedback to the platform. Account and transaction screens may use synthetic seeded data; recommendation delivery and feedback must not be disconnected hardcoded fixtures.
 
 ### 11.2 Subsequent product capabilities
 
