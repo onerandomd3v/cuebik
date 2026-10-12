@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.3  
+**Version:** 0.4.4  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 12 October 2026
 
@@ -206,7 +206,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 **First-release requirement:** Cuebik's bank-facing dashboard, product catalog, Core API, customer-intelligence processing, recommendation evaluation, Central Agent coordination, bank-policy enforcement, approval workflow, Temporal execution, and audit/feedback history must **function end to end against authoritative backend records**. The fictional banking environment supplies permitted **synthetic customer/account/activity data**, and the virtual phone provides **simulated customer delivery views**. Do not substitute UI-only recommendations, fake dashboard totals, fixed agent outputs, or animated message delivery for actual application behavior.
 
-**Input boundary:** The first implementation can receive fictional customer facts and transaction events from the banking simulator. **CSV customer-data import is a candidate initial ingestion path, not yet a finalized requirement**; if selected, it should pass through the same validated bank-scoped ingestion and customer-intelligence path. Bank employees must be able to create and manage real product-catalog records in the dashboard. Real bank feeds and real money movement are not part of this initial demonstration.
+**Input boundary:** The first implementation supports **CSV uploads of fictional customer data** through the bank-facing dashboard **and synthetic customer activity from the banking simulator**. Both must use validated, bank-scoped ingestion into the same authoritative customer-intelligence pipeline, recording import results and data provenance. Bank employees must be able to create and manage real product-catalog records in the dashboard. Real bank feeds and real money movement are not part of this initial demonstration. The precise CSV columns, mapping, error handling and import workflow are implementation details.
 
 **Proposed trigger and timing model (details not yet finalized):** On permitted new/changed customer data or catalog changes, evaluate affected customer-product candidates. A scheduled re-evaluation can also reconsider stored evidence at a configured cadence. **Only a qualifying Recommend outcome** can initiate Central Agent engagement planning; Clarify and Suppress must not generate a marketing handoff. The agent proposes whether to engage, an allowed channel and an appropriate time window from available evidence and bank restrictions; **it does not claim to know a mathematically optimal send time**. Deterministic policy and, where required, a human reviewer authorize the action; Temporal handles any permitted waiting and dispatch checks. No continuously running LLM loop is required.
 
@@ -319,6 +319,6 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 4. **Authentication and service boundaries:** Specify employee sessions, credentials, authorization roles and MFA needs; define versioned inter-service contracts, tenant isolation, data ownership and audit records.
 5. **Infrastructure and operations:** Select hosting/regions for Next.js apps, Core API, intelligence and workers, plus managed PostgreSQL. Specify secrets, backups, tracing storage, recovery procedures, operational alerts and measurable service objectives.
 6. **SMS and Email provider adapters:** Africa's Talking and SendByte are the selected initial providers. Validate their adapter integrations and normalized feedback behavior during implementation; demo inboxes remain simulated by default.
-7. **Customer ingestion and visualization:** Decide whether CSV customer imports are part of the first release alongside simulator events, and whether to implement an interactive evidence graph. Neither requires a new database or external AI dependency by default.
+7. **Customer ingestion and visualization:** Implement approved CSV customer imports and simulator-originated customer events through the same validated bank-scoped processing path. Define exact CSV schemas and ingestion mechanics during implementation. An interactive evidence graph remains optional; neither input path requires a new database or external AI dependency by default.
 
 **Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
