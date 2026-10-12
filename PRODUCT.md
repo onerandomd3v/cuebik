@@ -1,6 +1,6 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.3  
+**Version:** 0.1.4  
 **Status:** Draft for product review  
 **Updated:** 12 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
@@ -95,7 +95,7 @@ Full employee invitations, multiple permission groups, delegated administration,
 ## 4. End-to-end product journey
 
 1. **Configure the bank.** An authorized institution establishes its workspace, initial products, connection settings, and applicable engagement restrictions.
-2. **Supply permitted information.** Bank-approved customer signals, product definitions, and communication permissions are ingested or synchronized from authorized bank systems; supported manual inputs are available where applicable.
+2. **Supply permitted information.** Initially, bank staff import fictional customer records via CSV and the fictional banking PWA supplies customer activity events; both use the same Cuebik ingestion path. A real bank integration may later supply governed customer signals and existing communication permissions. Bank product definitions are managed in the working catalog.
 3. **Build customer intelligence.** Cuebik organizes verified facts and inferred signals, records data freshness and permitted use, and recognizes missing or contradictory evidence.
 4. **Evaluate products.** The Recommendation Engine checks active catalog products, applicable constraints, and available customer evidence. It produces **Recommend**, **Clarify**, or **Suppress**, with reasons and references.
 5. **Coordinate engagement.** For an eligible recommendation, the Central Agent proposes whether engagement is appropriate, a suitable time window, and a permitted bank channel. A recommendation alone never dispatches a message.
@@ -117,10 +117,12 @@ Every step must be traceable to its source decision and the current organization
 
 Four functional connection areas:
 
-1. **Customer Data Ingestion:** Receive bank-approved, purpose-scoped financial, behavioural, account-status, and communication-permission signals.
+1. **Customer Data Ingestion:** Import fictional customer records by bank-dashboard CSV and process permitted fictional banking-PWA events initially; support purpose-scoped financial, behavioural, account-status, and bank-managed communication-permission signals through future governed connections.
 2. **Product Catalog Integration:** Synchronize approved product definitions, effective terms, eligibility conditions, and lifecycle changes; allow managed manual entry/import where applicable.
 3. **Engagement Delivery:** Hand authorized engagement instructions to the bank's existing Banking App, SMS, or Email systems.
 4. **Delivery & Feedback:** Receive provider acknowledgements and permitted customer interaction events.
+
+**Bank-managed customer communication:** Cuebik uses the bank's existing customer reference, contact details, and applicable channel/purpose permissions and restrictions as supplied by the bank. Customers do **not** need to register with Cuebik or configure separate Cuebik communication preferences for the bank to use an otherwise authorized channel. Transactional alerts and promotional product recommendations may have different permission requirements; an account relationship alone must not be treated as unrestricted authorization for promotional outreach. Missing, conflicting, or restricted promotional permissions cannot be silently assumed granted.
 
 **Required behaviour:** An integration has a configured scope, lifecycle status, last-known synchronization/health information, and a clear distinction between simulated connectivity and an actual connected bank system. Failed connections cannot silently convert unknown data into verified facts or unknown deliveries into confirmed deliveries.
 
@@ -170,7 +172,7 @@ Separate:
 - **Inferred hypotheses:** e.g., a possible savings interest derived from repeat deposits.
 - **Unknown / insufficient evidence:** information that cannot presently support a reliable inference or eligibility check.
 
-Cuebik must not present an inferred life event, purchasing intent, disposable income, or suitability conclusion as a verified customer fact. An absent signal is not evidence of disinterest. Customer-level pages must respect permissions and avoid exposing unnecessary identifiers or raw transactional detail.
+Cuebik must not present an inferred life event, purchasing intent, disposable income, or suitability conclusion as a verified customer fact. An absent signal is not evidence of disinterest. **Customer profiles and recommendations must work for CSV-imported customers who have never opened the banking simulator.** Permitted simulator-generated activity may enrich a matched customer profile later. Customer-level pages must respect permissions and avoid exposing unnecessary identifiers or raw transactional detail.
 
 ### 5.4 Recommendation Engine
 
@@ -192,7 +194,7 @@ A recommendation score, where present, is an evaluation signal, not a probabilit
 
 **Purpose:** Decide **WHETHER**, **WHEN**, and **HOW** to propose engagement for an eligible recommendation, then record that coordination.
 
-The agent may consider bank-approved channel permissions, customer communication cadence, relevant contextual signals, product terms, scheduled windows, and existing engagement state. It proposes an action; it cannot grant itself authorization or bypass the Policy & Autonomy Engine.
+The agent may consider **bank-observed application activity and engagement history**, permitted channel/purpose restrictions, communication cadence, product terms, allowed contact windows, and existing engagement state. Where recorded and permitted, app-open or interaction events and last-observed activity can inform a **proposed engagement time with an evidence-based explanation**. Cuebik must not claim to detect general internet connectivity, activity outside a bank-controlled application, or a statistically optimal send time from insufficient evidence. Missing activity signals are not invented or treated as proof of inactivity. The agent proposes an action; it cannot grant itself authorization or bypass the Policy & Autonomy Engine.
 
 Agent Activity shows bank-facing availability as **Running**, **Idle**, or **Unavailable**, plus a searchable history of proposals, clarifications, suppressions, planned channels/times, policy handoffs, and resulting workflow states. Detailed individual decisions link to recommendation evidence and any approval/engagement record.
 
@@ -311,7 +313,7 @@ The table below specifies **product-level information groups**, not database sch
 | Organization | Stable bank identity, workspace, access context, regional defaults | Do not mix records from different banks. |
 | Customer reference | Bank-scoped pseudonymous reference and data-readiness context | Direct identifying information should be limited to necessary, authorized uses. |
 | Customer signals | Permitted behavioural/financial summaries, verification/source, freshness | Do not infer intimate motives as proven facts. |
-| Communication permissions | Allowed/restricted channels, provenance, applicable constraints | Unknown permission does not authorize outreach. |
+| Bank-managed communication permissions | Bank-supplied permitted/restricted channels and purposes, applicable constraints and provenance | No separate Cuebik customer preference setup; unknown marketing permission does not authorize promotional outreach. |
 | Financial product | Stable ID, active state, terms, eligibility, exclusions, disclosures | Terms used in a message must match the approved catalog version. |
 | Recommendation record | Candidate, outcome, reason, evidence, uncertainty, evaluation time | Match result is not a credit or purchase decision. |
 | Agent decision | Whether/when/how proposal, supporting rationale, source recommendation | Coordination is not dispatch authorization. |
@@ -359,6 +361,10 @@ An administrator saves a new policy draft and runs illustrative scenarios. The a
 ### Scenario H — Bank PWA to Cuebik and back
 
 A fictional Harbourline Bank customer performs a **simulated** savings deposit in the virtual smartphone's Banking App. The PWA posts an authorized synthetic event to the Core API, which records its provenance and makes permitted signals available to Customer Intelligence and the Recommendation Engine. If the outcome is **Recommend**, the Central Agent may propose a customer message; the Policy Engine either **Withholds**, requires **Review**, or permits **Automate**. For Review, the authorized bank reviewer must approve the exact message before dispatch. Temporal-based engagement execution applies final checks and sends the approved instruction to **only the selected simulated channel**. The corresponding Banking App, SMS, or Email view retrieves its newly created backend inbox item. If the customer opens the message or requests details, that supported event is saved and shown in Cuebik's dashboard. Suppressed, withheld, unapproved and expired engagements produce no inbox message; sending and receiving simulation acknowledgements do not imply actual network SMS/email delivery.
+
+### Scenario I — CSV intelligence without simulator registration
+
+A bank employee imports fictional customer records from a CSV through the working dashboard. The Core API validates and saves scoped customer evidence, then Customer Intelligence and the Recommendation Engine evaluate eligible products. Bank staff can inspect actual results and agent activity even for customers with **no banking-simulator session**. Recorded, bank-supplied contact permissions and available delivery capabilities still govern any later outbound engagement; a CSV import or recommendation alone never claims that a message reached a customer.
 
 ---
 
@@ -425,7 +431,7 @@ This section distinguishes the **defined full experience** from the **initial fu
 ### 11.1 Initial functional baseline
 
 - Authenticated, organization-scoped banking workspace with a **single Super Admin** role.
-- Working permitted synthetic customer data intake and a usable bank product catalog.
+- Working bank-dashboard CSV import of fictional customer records, permitted banking-simulator event ingestion into the same customer-intelligence pipeline, and a usable, editable bank product catalog.
 - Customer intelligence profiles with fact/hypothesis separation and evidence readiness.
 - End-to-end Recommend / Clarify / Suppress matching with explanations.
 - Central Agent decisions and activity records linking to source recommendations.
@@ -451,14 +457,14 @@ An incomplete feature must be described as planned or illustrative rather than p
 These are **unresolved product-level decisions** requiring explicit agreement before their detailed contracts are finalized. Approved technologies and remaining technical choices are tracked in `ARCHITECTURE.md`.
 
 1. **Initial product families:** Confirm the specific savings, fixed-deposit, and SME/credit product types needed for the first curated catalog, with genuine fictional terms and eligibility rules.
-2. **Customer signal contract:** Define exactly which synthetic financial/behavioural summaries, freshness rules, and stated preferences the evaluation will accept.
+2. **Customer signal contract:** Define exact CSV and simulator financial/behavioural summaries, permissible bank-app activity/engagement timing signals, freshness rules, and stated preferences the evaluation will accept.
 3. **Clarification handling:** Confirm which gaps are resolved internally versus which could generate a separately authorized customer prompt.
 4. **Product suitability boundaries:** Decide which exclusion criteria are mandatory bank rules and which evaluations may be learned or inferred.
 5. **Autonomy defaults:** Agree the initial bank policy set, review thresholds, frequency restrictions, permitted channels, and the safe behaviour when no rule matches.
 6. **Approval roles:** Define the one-Super-Admin functional baseline while preserving the future distinction between ownership, review, and policy-activation permissions.
 7. **Delivery evidence:** Define which simulated events justify Sent, Delivered, Failed, or Unknown for Banking App, SMS, and Email.
 8. **Product success evaluation:** Define baseline comparisons and which customer-respectful outcomes can actually be measured with the available dataset.
-9. **Bank connection model:** Agree the permitted ingestion/product/delivery/feedback capabilities required for the first functional system versus later external connectors.
+9. **Bank connection model:** CSV imports and banking-simulator events are the agreed initial data sources; define the scope of later real-bank ingestion, catalog, delivery and feedback connectors.
 10. **Reference dataset:** Establish one canonical synthetic organization, customer, catalog, recommendation, policy, approval, and engagement fixture set so every product screen agrees.
 11. **Simulator financial events:** Select the first supported fictional deposit/savings/transfer-like interactions, synthetic balance effects, event identifiers, and allowed feature updates; no real money movement.
 12. **Simulator channel contracts:** Specify how approved engagements become backend Banking App/SMS/Email inbox items, which simulated acknowledgements are credible, and how customer actions propagate to the dashboard without falsely claiming external delivery.
