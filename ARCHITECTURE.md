@@ -1,6 +1,6 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.11  
+**Version:** 0.4.12  
 **Status:** Working draft — approved direction with open implementation decisions  
 **Updated:** 13 October 2026
 
@@ -41,7 +41,7 @@ Decisions must be evaluated as a system: Temporal orchestration must coordinate 
 
 ## 2. Approved application and service boundaries
 
-The product has three independently deployable Next.js web applications—the public landing site, staff dashboard and fictional banking PWA—and several independently runnable backend responsibilities. The landing site (`apps/web/landing`) and dashboard (`apps/web/dashboard`) are **separate application roots** within the `apps/web` organizational grouping; the banking PWA (`apps/banking-pwa`) is a separate top-level app. **The banking PWA is a virtual smartphone with Banking App, SMS and Email views, rather than three real delivery providers or a native Android application.** Independently deployable applications do not require each business module to become a microservice. Organization-scoped authorizations, product/policy versions, approvals and engagement states require a shared transactional authority.
+The product has three independently deployable Next.js web applications—the public landing site, staff dashboard and fictional banking PWA—and several independently runnable backend responsibilities. The landing site (`apps/web/landing`) and dashboard (`apps/web/dashboard`) are **separate application roots** within the `apps/web` organizational grouping; the banking PWA (`apps/bank`) is a separate top-level app. **The banking PWA is a virtual smartphone with Banking App, SMS and Email views, rather than three real delivery providers or a native Android application.** Independently deployable applications do not require each business module to become a microservice. Organization-scoped authorizations, product/policy versions, approvals and engagement states require a shared transactional authority.
 
 ### 2.1 Editable service diagram
 
@@ -53,7 +53,7 @@ flowchart TB
         M["Landing Website<br/>apps/web/landing"]
         D["Bank Dashboard<br/>apps/web/dashboard"]
     end
-    P["Banking Demo PWA<br/>apps/banking-pwa"]
+    P["Banking Demo PWA<br/>apps/bank"]
     subgraph B["apps/backend: independently runnable services"]
         API["Core API: Django + Django Ninja<br/>Customers, catalog, policies, approvals, engagements"]
         REC["Intelligence Service<br/>Python eligibility and ranking"]
@@ -100,7 +100,7 @@ flowchart TB
 | --- | --- | --- |
 | **Landing website (`apps/web/landing`)** | Own independent Next.js project, build and deployment | Public content, SEO, caching and release cadence differ from the staff dashboard and banking simulator. |
 | **Banking dashboard (`apps/web/dashboard`)** | Own independent authenticated Next.js project, build and deployment | Bank staff need rich, secured operations independent of public site releases. |
-| **Banking PWA (`apps/banking-pwa`)** | Own top-level independent installable Next.js project, build and deployment | Hosts one virtual smartphone with simulated Banking App, SMS, Email, and Notifications views; customer-scoped API supplies only authorized messages and records feedback. |
+| **Banking PWA (`apps/bank`)** | Own top-level independent installable Next.js project, build and deployment | Hosts one virtual smartphone with simulated Banking App, SMS, Email, and Notifications views; customer-scoped API supplies only authorized messages and records feedback. |
 | **Core Platform API** | Independent backend deployment | Owns authoritative bank-scoped data and consequential policy/approval/engagement transitions. |
 | **Intelligence & Recommendation Service** | Independently testable Python service; separate deployment candidate | Feature processing and ML evaluation may require independent resources and model release cycles. |
 | **Agent orchestration** | Separate worker runtime; independent deployment if justified | Planning and optional language inference should not block interactive requests. |
@@ -156,7 +156,7 @@ The chosen channel is **one branch per authorized engagement**, not a broadcast 
 
 | Boundary | Responsibilities | Reason / invariant |
 | --- | --- | --- |
-| **PWA UI (apps/banking-pwa)** | Desktop centered phone shell; mobile full-viewport UI; simulated Banking App, SMS, Email and Notifications; customer demo interactions. | One installable web app, not an emulated Android OS or three external message services. |
+| **PWA UI (apps/bank)** | Desktop centered phone shell; mobile full-viewport UI; simulated Banking App, SMS, Email and Notifications; customer demo interactions. | One installable web app, not an emulated Android OS or three external message services. |
 | **Synthetic financial event** | Customer-demo session triggers a permitted fictional savings/deposit/transfer-like action; server validates the scenario and records source, bank/customer scope, event ID, timestamp and provenance. | Reproducible, isolated event inputs for intelligence; no real funds, bank credentials or payment instructions. |
 | **Observed app activity** | Record permitted, attributable app-open and customer interaction events with timestamps and provenance for engagement-timing context. | Bank-app activity does not establish general internet presence or permission to market. |
 | **Intelligence and agent** | Authorized event data updates appropriate customer features; product matching returns Recommend / Clarify / Suppress; agent proposes a permitted message channel and time. | A synthetic event does not guarantee a product recommendation or contact. |
@@ -221,7 +221,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 ## 3. Approved monorepo organization
 
-The **directory organization** is approved and has been scaffolded with tracked directory placeholders. This layout does **not** mean the applications, backend services, shared packages or infrastructure have been implemented. Every deployable app/service lives under `apps/`: the independent landing and staff dashboard apps are grouped in `apps/web/`, while the fictional banking PWA has its own top-level `apps/banking-pwa/` directory.
+The **directory organization** is approved and has been scaffolded with tracked directory placeholders. This layout does **not** mean the applications, backend services, shared packages or infrastructure have been implemented. Every deployable app/service lives under `apps/`: the independent landing and staff dashboard apps are grouped in `apps/web/`, while the fictional banking PWA has its own top-level `apps/bank/` directory.
 
 ```text
 cuebik/
@@ -233,7 +233,7 @@ cuebik/
 │   │   ├── DESIGN.md          # Shared Cuebik design rules for marketing/dashboard
 │   │   ├── landing/           # Independent Next.js public landing site
 │   │   └── dashboard/         # Independent Next.js bank employee portal
-│   ├── banking-pwa/           # Independent Next.js fictional bank PWA
+│   ├── bank/                  # Independent Next.js fictional bank PWA
 │   └── backend/
 │       ├── api/               # Django + Django Ninja authoritative core
 │       ├── intelligence/      # Python customer features/recommendations
@@ -249,7 +249,7 @@ cuebik/
 
 **Document-location note:** The existing design guide was relocated from the repository root to [`apps/web/DESIGN.md`](apps/web/DESIGN.md) during directory scaffolding. It continues to govern Cuebik's marketing site and bank dashboard, **not** the fictional bank PWA's visual identity.
 
-`apps/web/` is **a grouping directory, not one combined frontend build**. When implementation begins, `apps/web/landing/`, `apps/web/dashboard/` and `apps/banking-pwa/` each own their app source, application manifest, build configuration, tests and deployment target. A contributor may work on, build and deploy the landing app without rebuilding the dashboard, PWA or backend; likewise, the dashboard and PWA release independently. An app may deliberately consume versioned shared packages or APIs, whose contract changes can affect consumers; independence does not mean zero shared dependencies. No app scaffolding/configuration exists yet. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
+`apps/web/` is **a grouping directory, not one combined frontend build**. When implementation begins, `apps/web/landing/`, `apps/web/dashboard/` and `apps/bank/` each own their app source, application manifest, build configuration, tests and deployment target. A contributor may work on, build and deploy the landing app without rebuilding the dashboard, PWA or backend; likewise, the dashboard and PWA release independently. An app may deliberately consume versioned shared packages or APIs, whose contract changes can affect consumers; independence does not mean zero shared dependencies. No app scaffolding/configuration exists yet. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
 
 ## 4. Intelligence and execution design rules
 
