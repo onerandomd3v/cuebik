@@ -4,7 +4,7 @@
 **Updated:** 12 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
-This file is the **source of truth for Cuebik's brand identity**. Contributors and coding agents should follow its naming, colors, typography, logo, and messaging rules. Interface-level specifications belong in Cuebik's separate `DESIGN.md`.
+This file is the **source of truth for Cuebik's brand identity**. Contributors and coding agents should follow its naming, colors, typography, logo, and messaging rules. Interface-level specifications belong in Cuebik's [`apps/web/DESIGN.md`](apps/web/DESIGN.md).
 
 ---
 
@@ -68,7 +68,7 @@ Use these exact values for Cuebik's core identity.
 - Use strong, concise headings, readable body copy, and generous whitespace.
 - Prefer sentence case. Avoid long all-caps headings or paragraphs.
 - Establish hierarchy through type size, weight, and spacing rather than decorative colors.
-- Exact font sizes, line heights, and responsive text scales belong in `DESIGN.md`.
+- Exact font sizes, line heights, and responsive text scales belong in `apps/web/DESIGN.md`.
 
 ---
 
@@ -153,10 +153,10 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 
 **Asset and documentation ownership**
 
-The approved SVG paths in [§04](#04-logo-guidelines) are the canonical brand assets. The **repository layout** is defined in [`ARCHITECTURE.md`](ARCHITECTURE.md), rather than duplicated here. `DESIGN.md` currently lives at the repository root and is planned to move to `apps/web/DESIGN.md` when those application directories are created.
+The approved SVG paths in [§04](#04-logo-guidelines) are the canonical brand assets. The **repository layout** is defined in [`ARCHITECTURE.md`](ARCHITECTURE.md), rather than duplicated here. The existing design guide now lives at [`apps/web/DESIGN.md`](apps/web/DESIGN.md), alongside the scaffolded web app directories.
 
 - **`BRAND.md`** controls brand identity: names, messaging, logos, colors, typography, and overall visual direction.
-- **`DESIGN.md`** controls implementation: design tokens, responsive layouts, components, dashboard patterns, themes, and interaction details. It must follow `BRAND.md` where the two overlap.
+- **`apps/web/DESIGN.md`** controls implementation: design tokens, responsive layouts, components, dashboard patterns, themes, and interaction details. It must follow `BRAND.md` where the two overlap.
 - Use approved assets directly. Do not substitute generated approximations or edit the master SVGs inside product components.
 - When a brand rule changes, update `BRAND.md` and the affected asset files first, then update design specifications and product surfaces accordingly.
 

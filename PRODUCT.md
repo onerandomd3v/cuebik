@@ -6,7 +6,7 @@
 **Product category:** Banking Intelligence & Engagement Platform  
 **Tagline:** Make every recommendation count.
 
-> **Document authority:** This file defines what Cuebik is, the problems it solves, the users it serves, its intended capabilities, its business rules, and how its product workflows behave. It is the product source of truth, not a technology selection, deployment specification, API reference, or assertion that a capability is already implemented. `BRAND.md` governs identity and language; `DESIGN.md` governs UI implementation. Approved technical decisions and unresolved engineering choices belong in `ARCHITECTURE.md`.
+> **Document authority:** This file defines what Cuebik is, the problems it solves, the users it serves, its intended capabilities, its business rules, and how its product workflows behave. It is the product source of truth, not a technology selection, deployment specification, API reference, or assertion that a capability is already implemented. `BRAND.md` governs identity and language; `apps/web/DESIGN.md` governs UI implementation. Approved technical decisions and unresolved engineering choices belong in `ARCHITECTURE.md`.
 
 ---
 
@@ -427,7 +427,7 @@ These describe required **product behaviour**, not claims of completed certifica
 
 - Bank-facing administrative language should be understandable without engineering expertise.
 - Support Nigerian banking context, NGN/₦, West Africa Time, and clear status labels that do not depend only on color.
-- The dashboard follows `DESIGN.md`; the separate customer-facing simulator follows its fictional bank's own design language. Its red-inspired palette is not a copy of Zenith Bank's official UI or a claim of an official integration.
+- The dashboard follows `apps/web/DESIGN.md`; the separate customer-facing simulator follows its fictional bank's own design language. Its red-inspired palette is not a copy of Zenith Bank's official UI or a claim of an official integration.
 
 ---
 
@@ -504,7 +504,7 @@ An incomplete feature must be described as planned or illustrative rather than p
 | Concern | Authority |
 | --- | --- |
 | Product identity, messaging, logo, and brand vocabulary | [`BRAND.md`](BRAND.md) |
-| UI design system, components, themes, and layouts | [`DESIGN.md`](DESIGN.md) |
+| UI design system, components, themes, and layouts | [`apps/web/DESIGN.md`](apps/web/DESIGN.md) |
 | Product intent, behaviour, terminology, scope, and acceptance scenarios | **This `PRODUCT.md`** |
 | Selected technology, boundaries, data contracts, architecture, and deployment | [`ARCHITECTURE.md`](ARCHITECTURE.md) and its referenced contracts |
 | Implemented behaviour | Tests and running software, checked against approved product and architecture specifications |

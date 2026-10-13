@@ -109,9 +109,9 @@ components:
 
 ## Overview
 
-**Authority:** Read `BRAND.md` first for the approved logo assets, brand colors, typefaces, and messaging. This file governs UI implementation; it does **not** define product features, AI logic, permissions, or APIs. If brand rules conflict, `BRAND.md` wins.
+**Authority:** Read `../../BRAND.md` first for the approved logo assets, brand colors, typefaces, and messaging. This file governs UI implementation; it does **not** define product features, AI logic, permissions, or APIs. If brand rules conflict, `../../BRAND.md` wins.
 
-**Product context:** Cuebik is a Banking Intelligence & Engagement Platform for banks. Use `BRAND.md` for the authoritative product description.
+**Product context:** Cuebik is a Banking Intelligence & Engagement Platform for banks. Use `../../BRAND.md` for the authoritative product description.
 
 **Visual direction:** Minimal, precise, high-contrast SaaS UI; generous whitespace, restrained yellow accents, realistic data displays. Prefer clarity and operational control over decoration.
 
@@ -121,7 +121,7 @@ components:
 
 ## Colors
 
-Use the front-matter tokens as canonical UI values. They implement the core palette in `BRAND.md` plus supporting neutrals; supporting tokens are not new brand colors. Components must consume semantic tokens rather than hard-coded colors. In `components`, use the `light` or `dark` variant matching the active dashboard theme; properties outside those variants apply in both themes.
+Use the front-matter tokens as canonical UI values. They implement the core palette in `../../BRAND.md` plus supporting neutrals; supporting tokens are not new brand colors. Components must consume semantic tokens rather than hard-coded colors. In `components`, use the `light` or `dark` variant matching the active dashboard theme; properties outside those variants apply in both themes.
 
 | UI role | Light mode | Dark mode |
 | --- | --- | --- |
@@ -139,7 +139,7 @@ Use the front-matter tokens as canonical UI values. They implement the core pale
 
 ## Typography
 
-- **Inter** is the UI font; **JetBrains Mono** is reserved for identifiers, code, or technical values. Use the SVG wordmark from `BRAND.md`, not styled text.
+- **Inter** is the UI font; **JetBrains Mono** is reserved for identifiers, code, or technical values. Use the SVG wordmark from `../../BRAND.md`, not styled text.
 - Use the named typography tokens for dashboard text. Prefer sentence case, left alignment, and tabular figures in numeric columns.
 - `display` is for landing-page hero copy only; scale it down on narrow screens rather than reusing it on dashboard cards.
 - Essential instructions and primary data must not rely on tiny caption text.
@@ -176,7 +176,7 @@ Use the documented corner-radius tokens: `sm` for inputs/buttons, `md` for cards
 - **Details and review:** Use a detail panel/page for supporting evidence; dialogs for final confirmation. Approval decisions must make the action and its consequences explicit. Display the current organization and permitted actions clearly; avoid controls that imply unavailable permissions.
 - **Recommendation UI:** Display **product match + rationale + next step**. Separate the recommendation engine's **WHAT**, the agent's **WHETHER/WHEN/HOW**, and the bank's **AUTOMATE/REVIEW/WITHHOLD** decision. An unsuitable match is a valid outcome, not an error.
 - **Decision versus delivery status:** `Recommend`, `Clarify`, `Suppress` describe decision outcomes. `Proposed`, `Pending review`, `Approved`, `Sent`, `Delivered`, `Withheld`, `Failed` describe workflow execution. **Never imply `Recommended = Sent` or `Approved = Delivered`.** Show timestamps and actors when available.
-- **Shared dashboard screens:** Overview = attention and activity; Customers = profiles and interests; Products & Catalog = bank offerings and eligibility definitions; Recommendations = match evidence; Agent Activity = orchestration status and decision history; Approvals = review queue; Engagement = channel/message outcomes; Policies & Automation = bank-controlled rule settings; Integrations = authorized bank-system connections; Organization Settings = workspace and authorized access. Use only controls supported by `PRODUCT.md`.
+- **Shared dashboard screens:** Overview = attention and activity; Customers = profiles and interests; Products & Catalog = bank offerings and eligibility definitions; Recommendations = match evidence; Agent Activity = orchestration status and decision history; Approvals = review queue; Engagement = channel/message outcomes; Policies & Automation = bank-controlled rule settings; Integrations = authorized bank-system connections; Organization Settings = workspace and authorized access. Use only controls supported by `../../PRODUCT.md`.
 
 ## Do's and Don'ts
 
@@ -187,4 +187,4 @@ Use the documented corner-radius tokens: `sm` for inputs/buttons, `md` for cards
 - **Do** keep the landing page responsive and the dashboard desktop-oriented. **Don't** introduce a mobile dashboard navigation system.
 - **Do** label illustrative mockups and synthetic datasets. **Don't** present demos as real customer records or measured bank outcomes.
 
-**Agent handoff:** Read `BRAND.md` → read this file → check the current product specification and implemented components → design only the requested screen. Do not add features, roles, permissions, or integration states based solely on visual examples.
+**Agent handoff:** Read `../../BRAND.md` → read this file → check the current product specification and implemented components → design only the requested screen. Do not add features, roles, permissions, or integration states based solely on visual examples.

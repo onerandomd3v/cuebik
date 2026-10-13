@@ -176,7 +176,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 **Status evidence:** A successful mock adapter handoff may justify *simulated Sent*; backend inbox persistence or an explicit simulator acknowledgement may justify *simulated Delivered/Available* only under an agreed evidence contract. A real SMS/email has not been sent, and merely drawing a notification cannot count as a confirmed human view. Production-facing reports must label simulator-derived metrics as synthetic.
 
-**Visual design:** The simulator retains the fictional **Harbourline Bank** identity. Its red-led interface may be inspired by Zenith Bank's color palette, but **no official bank logo, exact proprietary screen recreation, credentials, or claim of real Zenith integration is permitted**. Cuebik's root DESIGN.md governs the marketing site and employee dashboard; the bank simulator's visual system remains separate.
+**Visual design:** The simulator retains the fictional **Harbourline Bank** identity. Its red-led interface may be inspired by Zenith Bank's color palette, but **no official bank logo, exact proprietary screen recreation, credentials, or claim of real Zenith integration is permitted**. Cuebik's `apps/web/DESIGN.md` governs the marketing site and employee dashboard; the bank simulator's visual system remains separate.
 
 ### 2.5 Integration acceptance checks
 
@@ -221,7 +221,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 ## 3. Approved monorepo organization
 
-The **directory organization** is approved; this is the target structure, not a claim that application directories have already been scaffolded. Every deployable app/service is nested under `apps/`, grouped by category.
+The **directory organization** is approved and has been scaffolded with tracked directory placeholders. This layout does **not** mean the applications, backend services, shared packages or infrastructure have been implemented. Every deployable app/service is nested under `apps/`, grouped by category.
 
 ```text
 cuebik/
@@ -247,7 +247,7 @@ cuebik/
     └── brand/                 # Shared approved brand assets
 ```
 
-**Document-location note:** The existing root-level `DESIGN.md` has **not yet moved**. It currently governs the Cuebik landing site and bank dashboard. When app folders are physically created, move it to `apps/web/DESIGN.md` and update all links together. It does not govern the fictional bank PWA's visual identity.
+**Document-location note:** The existing design guide was relocated from the repository root to [`apps/web/DESIGN.md`](apps/web/DESIGN.md) during directory scaffolding. It continues to govern Cuebik's marketing site and bank dashboard, **not** the fictional bank PWA's visual identity.
 
 Applications retain independent builds and deployments. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
 
@@ -385,4 +385,4 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 6. **SMS and Email provider adapters:** Africa's Talking and SendByte are the selected initial providers. Validate their adapter integrations and normalized feedback behavior during implementation; demo inboxes remain simulated by default.
 7. **Customer ingestion, policy fixtures and evaluation:** Implement approved CSV customer imports and simulator-originated customer events through the same validated bank-scoped processing path. Define exact CSV schemas and ingestion mechanics; configure fictional savings/fixed-deposit/SME-credit catalog terms and review/automation policies; build the agreed **canonical synthetic acceptance dataset** with independently defined expected outcomes. An interactive evidence graph remains optional; neither input path requires a new database or external LLM dependency by default.
 
-**Repository migration is deferred to scaffolding:** The existing root-level `DESIGN.md` remains authoritative until it and its relative references can move together to `apps/web/DESIGN.md`, as recorded in [§3](#3-approved-monorepo-organization).
+**Repository scaffolding status:** The approved monorepo directories and relocated [`apps/web/DESIGN.md`](apps/web/DESIGN.md) are present. Placeholder directories contain no implemented applications, services, contracts, or deployment configuration.
