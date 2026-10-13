@@ -4,7 +4,7 @@
 >
 > **Status:** PR #7 established the directory structure. Applications, services and packages are still placeholders, not working projects. Workspace tooling, real commands, dependency checks and deployment pipelines have not been implemented.
 >
-> **Audience:** Both developers and coding agents may consult this guide for workspace understanding. A **separate root-level `AGENTS.md` is planned** for coding-agent and contributor operating instructions. It does not exist yet and is **not part of this PR**.
+> **Audience:** Both developers and coding agents may consult this guide for workspace understanding. The separate root-level `AGENTS.md` provides coding-agent and contributor operating instructions.
 
 ## 1. Documentation boundaries
 
@@ -15,9 +15,9 @@
 | [`BRAND.md`](../BRAND.md) | Cuebik identity |
 | [`apps/web/DESIGN.md`](../apps/web/DESIGN.md) | Landing/dashboard visual and interaction specifications |
 | **`docs/WORKSPACE.md`** | Repository layout, dependency ownership, local-development setup, build/test workflows and release isolation |
-| **`AGENTS.md` (future)** | Concise working rules for developers and coding agents, with links to the authoritative documents |
+| **`AGENTS.md`** | Concise working rules for developers and coding agents, with links to the authoritative documents |
 
-This document explains **where work belongs and how projects fit together**; it must not re-specify product policies, visual measurements or backend algorithms. Refer to the other documents for those decisions. The future `AGENTS.md` should link here rather than restate the workspace description.
+This document explains **where work belongs and how projects fit together**; it must not re-specify product policies, visual measurements or backend algorithms. Refer to the other documents for those decisions. The root-level `AGENTS.md` links here rather than restating the workspace description.
 
 ## 2. Repository structure
 
@@ -114,4 +114,4 @@ The table is a **live setup register**, not a permanent collection of unresolved
 
 ### Keeping this guide current
 
-Update `WORKSPACE.md` alongside changes to workspace manifests, actual developer commands, shared-package interfaces, boundary-enforcement configuration or CI/deployment workflows. Record what is **approved, implemented and verified**; remove obsolete placeholders. Keep product/architecture decisions in their source documents, and keep prescriptive coding-agent operating rules in the planned root-level `AGENTS.md` instead of copying them here.
+Update `WORKSPACE.md` alongside changes to workspace manifests, actual developer commands, shared-package interfaces, boundary-enforcement configuration or CI/deployment workflows. Record what is **approved, implemented and verified**; remove obsolete placeholders. Keep product/architecture decisions in their source documents, and keep prescriptive coding-agent operating rules in the root-level `AGENTS.md` instead of copying them here.
