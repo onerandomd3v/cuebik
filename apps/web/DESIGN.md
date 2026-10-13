@@ -170,6 +170,8 @@ Use the documented corner-radius tokens: `sm` for inputs/buttons, `md` for cards
 
 ## Components
 
+**Component ownership:** This guide governs Cuebik's landing and dashboard experiences, not the separately deployed virtual-phone simulator. Reuse the dashboard's **sidebar, top bar and page shell** consistently across its own screens; they belong within the dashboard app, not in the general-purpose shared UI package. `packages/ui/` may hold optional shared Cuebik primitives (such as basic inputs/buttons) if both landing and dashboard benefit. The landing app owns its own responsive navigation and layout. **`apps/phones/` uses its own bank-specific components and must not depend on `packages/ui/` or any `apps/web/` component.** Source-level reuse does not merge build or deployment responsibilities.
+
 - **Buttons and forms:** One primary action per context; secondary actions are neutral. Inputs have persistent labels, visible keyboard focus, inline errors, and clear disabled/loading states. Destructive or consequential actions require confirmation. Apply these patterns to sign-in, registration, organization setup, and invitations, including visible progress and error states; do not invent authentication rules.
 - **Tables:** Filter and sort controls above the data; readable headers, stable row actions, pagination, empty/loading/error states. Wide tables scroll **inside the table container**. Never conceal full identifiers without an accessible way to inspect them.
 - **Cards and charts:** Cards summarize a decision or metric, including its time range. Charts must have labels, units, a time range, and an accessible textual equivalent. Do not invent metrics or display synthetic data as live results.
