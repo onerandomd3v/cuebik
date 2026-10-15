@@ -2,7 +2,7 @@
 
 > **Purpose:** Explain how the Cuebik monorepo is organized, how its independent projects and shared packages relate, and how to develop, build, test and deploy them as implementation progresses.
 >
-> **Status:** The three frontend applications are being scaffolded with pnpm as part of the frontend foundation PR. Backend services and shared packages remain placeholders. Release targets and backend execution remain unimplemented; do not confuse buildable frontend scaffolds with completed product functionality.
+> **Status:** The three frontend applications now have initial Next.js scaffolds, a pnpm workspace and a lockfile. GitHub Actions has verified frozen dependency installation, app-specific lint/typecheck/builds, standalone HTTP startup, and import-boundary tests on Node.js 24. Backend services and shared packages remain placeholders; release targets and banking product functionality are not implemented.
 >
 > **Audience:** Both developers and coding agents may consult this guide for workspace understanding. The separate root-level `AGENTS.md` provides coding-agent and contributor operating instructions.
 
@@ -85,7 +85,7 @@ When a shared interface changes, validate the producer **and all relevant consum
 
 ## 5. Working, building and testing
 
-The scaffold contains **no verified install, dev, test, lint, build or deploy commands**. Do not invent commands or suggest that independent deployments or import checks already function.
+The **frontend** has verified installation, lint, typecheck, build, production-start smoke checks and import-boundary tests as documented below. The development-server commands are configured but have not been smoke-tested. **Backend runtime, deployment and release procedures are still pending**; do not invent commands or claim those capabilities work.
 
 As each project is implemented, add a concise, **verified** workspace reference for that project's:
 
@@ -117,22 +117,22 @@ pnpm run test:boundaries
 
 Each frontend app has its own source, package manifest, TypeScript/ESLint configuration and Next.js build target. The root pnpm workspace coordinates installs without combining the three apps. The optional `packages/ui/` and `packages/contracts/` directories remain placeholders rather than installable packages. Import-boundary checks reject frontend cross-app private-source imports and phones-to-Cuebik UI imports; this check is not a replacement for runtime authorization.
 
-**Verification:** These commands are proposed for CI verification on Node 24; do not mark them as successfully exercised until a run confirms the results. Backend commands, browser/PWA completeness and independent deployment infrastructure are not established by this scaffold.
+**Verification:** [Frontend CI](https://github.com/onerandomd3v/cuebik/actions/runs/38733437449) passed on Node.js 24 with pnpm 11.28.4: frozen install, per-app lint/typecheck/build, standalone server HTTP smoke tests (ports 3000/3001/3002) and AST-based import checks with negative tests. Root aggregate convenience scripts and interactive `next dev` have not been individually exercised. Browser/PWA completeness, backend commands and independent deployment infrastructure remain pending.
 
 ## 6. Evolving the implemented workspace
 
-The table is a **live setup register**, not a permanent collection of unresolved options. Each entry begins **Pending** because the repository is only scaffolded. As the corresponding work is approved, implemented and tested, replace the entry with the **actual tool, configuration, commands and verification**.
+The following is a **living implementation register**, distinguishing implemented and CI-verified frontend capabilities from still-pending work. Update each entry alongside approved configuration changes and verified results.
 
 | Concern | Required capability | Current status |
 | --- | --- | --- |
-| Workspace dependencies | Explicit app/package manifests and controlled dependency installation | **Pending:** workspace tool, manifests, lockfile and install commands |
-| Local development | Independent start, test, lint and build targets per project | **Pending:** real project entry points and commands |
-| Import enforcement | Checks reject private cross-app imports and phones importing Cuebik web UI | **Pending:** lint/dependency rules and negative tests |
+| Workspace dependencies | Explicit app/package manifests and controlled dependency installation | **Frontend implemented, CI-verified:** pnpm workspace, manifests, pinned pnpm, lockfile and frozen install; shared packages not yet implemented |
+| Local development | Independent start, test, lint and build targets per project | **Frontend partially verified:** each app builds, type-checks, lints and serves separately in CI; interactive dev-server commands configured but not smoke-tested; backend pending |
+| Import enforcement | Checks reject private cross-app imports and phones importing Cuebik web UI | **Frontend implemented, CI-verified:** TypeScript AST-based source-import check and negative tests; not a substitute for access control or future package export rules |
 | Interface validation | Versioned producer/consumer checks | **Pending:** schema strategy and compatibility checks |
 | Backend execution | Defined Core API and appropriate worker startup/test paths | **Pending:** executable entry points and service configuration |
-| CI and release isolation | Relevant checks and deployments run for changed projects and shared consumers | **Pending:** CI, dependency-aware selection, targets and access scopes |
+| CI and release isolation | Relevant checks and deployments run for changed projects and shared consumers | **Partially implemented:** GitHub Actions matrix checks each frontend independently; affected-project-only execution, deployments and deployment permissions remain pending |
 
-**Future proof-of-boundaries:** a phones-only UI change can build and release phones without building or releasing the other frontend apps; a forbidden phones-to-`packages/ui` import fails a configured check; a shared contract change tests affected consumers. **These are acceptance criteria, not current test results.**
+**Boundary verification:** isolated frontend app builds and HTTP startup, plus forbidden phones-to-`packages/ui` import tests, now pass in CI. Independent **deployments**, dependency-aware test selection and shared-contract consumer checks remain future acceptance criteria, not completed capabilities.
 
 ### Keeping this guide current
 

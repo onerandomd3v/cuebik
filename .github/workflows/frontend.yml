@@ -4,6 +4,7 @@ on:
     paths:
       - ".github/workflows/frontend.yml"
       - ".nvmrc"
+      - "docs/WORKSPACE.md"
       - "package.json"
       - "pnpm-*.yaml"
       - "scripts/**"
@@ -14,6 +15,7 @@ on:
     paths:
       - ".github/workflows/frontend.yml"
       - ".nvmrc"
+      - "docs/WORKSPACE.md"
       - "package.json"
       - "pnpm-*.yaml"
       - "scripts/**"
