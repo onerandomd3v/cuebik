@@ -117,7 +117,7 @@ pnpm run test:boundaries
 
 Each frontend app has its own source, package manifest, TypeScript/ESLint configuration and Next.js build target. The root pnpm workspace coordinates installs without combining the three apps. The optional `packages/ui/` and `packages/contracts/` directories remain placeholders rather than installable packages. Import-boundary checks reject frontend cross-app private-source imports and phones-to-Cuebik UI imports; this check is not a replacement for runtime authorization.
 
-**Verification:** [Frontend CI](https://github.com/onerandomd3v/cuebik/actions/runs/38733437449) passed on Node.js 24 with pnpm 11.28.4: frozen install, per-app lint/typecheck/build, standalone server HTTP smoke tests (ports 3000/3001/3002) and AST-based import checks with negative tests. Root aggregate convenience scripts and interactive `next dev` have not been individually exercised. Browser/PWA completeness, backend commands and independent deployment infrastructure remain pending.
+**Verification:** [Frontend CI](https://github.com/onerandomd3v/cuebik/actions/runs/38733437449) passed on Node.js 24 with pnpm 11.28.4: frozen install, per-app lint/typecheck/build, standalone server HTTP smoke tests (ports 3000/3001/3002) and AST-based import checks with negative tests. Root aggregate convenience scripts and interactive `next dev` have not been individually exercised. Browser/PWA completeness and independent deployment infrastructure remain pending; see the separately verified backend Core API checks below.
 
 ### Backend Core API (initial scaffold)
 
@@ -145,19 +145,19 @@ uv run ruff format --check .
 
 The route `GET http://127.0.0.1:8000/api/v1/health` returns `{"status":"ok"}`. It is a **process liveness check**, not evidence that the database, bank policies or customer communications are ready. Only Django's built-in contenttypes migration exists; **no Cuebik customer/product/approval models, permission logic or delivery execution are implemented**. The local Compose service binds PostgreSQL only to the loopback interface and persists data in a named volume; it is not production infrastructure.
 
-**Verification:** Backend GitHub Actions installs the locked uv environment, checks Ruff lint/format, validates Django and migration state, applies migrations to a real PostgreSQL CI service, runs API/PostgreSQL pytest tests, validates the Compose file and makes an HTTP request to the health endpoint. Local machine interactive setup and production deployment are separate, unverified activities.
+**Verification:** [Backend Core API CI](https://github.com/onerandomd3v/cuebik/actions/runs/38740029435) passed on Python 3.13 with uv 0.10.0: locked install, Ruff lint/format, Django and migration checks, migrations against PostgreSQL 17, three pytest tests, Compose configuration and an actual HTTP 200 health response with parsed JSON. Local interactive setup and production deployment are separate, unverified activities.
 
 ## 6. Evolving the implemented workspace
 
-The following is a **living implementation register**, distinguishing implemented and CI-verified frontend capabilities from still-pending work. Update each entry alongside approved configuration changes and verified results.
+The following is a **living implementation register**, distinguishing implemented and CI-verified frontend/Core API capabilities from still-pending work. Update each entry alongside approved configuration changes and verified results.
 
 | Concern | Required capability | Current status |
 | --- | --- | --- |
 | Workspace dependencies | Explicit app/package manifests and controlled dependency installation | **Frontend implemented, CI-verified:** pnpm workspace, manifests, pinned pnpm, lockfile and frozen install; shared packages not yet implemented |
-| Local development | Independent start, test, lint and build targets per project | **Frontends CI-verified** for build/lint/typecheck/start; interactive frontend development not tested. **Core API provisionally configured** with uv, PostgreSQL Compose and standalone Django development commands, pending the final backend CI run |
+| Local development | Independent start, test, lint and build targets per project | **Frontends CI-verified** for build/lint/typecheck/start; interactive frontend development not tested. **Core API CI-verified** for locked install, migrations, tests and HTTP startup; local Compose startup and interactive development commands are documented but not yet tested on a contributor machine |
 | Import enforcement | Checks reject private cross-app imports and phones importing Cuebik web UI | **Frontend implemented, CI-verified:** TypeScript AST-based source-import check and negative tests; not a substitute for access control or future package export rules |
 | Interface validation | Versioned producer/consumer checks | **Pending:** schema strategy and compatibility checks |
-| Backend execution | Defined Core API and appropriate worker startup/test paths | **Core API scaffold implemented:** Django settings, Ninja liveness route, uv lock, local Compose/PostgreSQL, migrations and pytest; final CI verification pending. Intelligence, agent and delivery workers pending |
+| Backend execution | Defined Core API and appropriate worker startup/test paths | **Core API scaffold implemented and CI-verified:** Django settings, Ninja liveness route, uv lock, PostgreSQL migrations/tests and Compose configuration; local Compose container startup unverified. Intelligence, agent and delivery workers pending |
 | CI and release isolation | Relevant checks and deployments run for changed projects and shared consumers | **Partially implemented:** independent frontend CI and targeted backend API CI jobs exist; affected-project-only execution, deployments and deployment permissions remain pending |
 
 **Boundary verification:** isolated frontend app builds and HTTP startup, plus forbidden phones-to-`packages/ui` import tests, now pass in CI. Independent **deployments**, dependency-aware test selection and shared-contract consumer checks remain future acceptance criteria, not completed capabilities.
