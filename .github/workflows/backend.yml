@@ -1,0 +1,88 @@
+name: Backend Core API checks
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/backend.yml"
+      - "apps/backend/**"
+      - "infra/compose.yaml"
+      - "docs/WORKSPACE.md"
+      - "ARCHITECTURE.md"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/backend.yml"
+      - "apps/backend/**"
+      - "infra/compose.yaml"
+      - "docs/WORKSPACE.md"
+      - "ARCHITECTURE.md"
+
+permissions:
+  contents: read
+
+jobs:
+  core-api:
+    runs-on: ubuntu-latest
+    env:
+      CUEBIK_DEBUG: "1"
+      CUEBIK_SECRET_KEY: "ci-only-do-not-use-outside-github-actions"
+      CUEBIK_ALLOWED_HOSTS: "127.0.0.1,localhost,testserver"
+      POSTGRES_HOST: "127.0.0.1"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "cuebik_ci"
+      POSTGRES_USER: "cuebik_ci"
+      POSTGRES_PASSWORD: "ci-only-database-password"
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: cuebik_ci
+          POSTGRES_USER: cuebik_ci
+          POSTGRES_PASSWORD: ci-only-database-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cuebik_ci -d cuebik_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.10.0"
+          enable-cache: true
+          cache-dependency-glob: "apps/backend/api/uv.lock"
+      - run: uv python install 3.13
+      - name: Sync locked dependencies
+        run: uv sync --project apps/backend/api --locked
+      - name: Ruff lint
+        run: uv run --project apps/backend/api --locked ruff check apps/backend/api
+      - name: Ruff formatting
+        run: uv run --project apps/backend/api --locked ruff format --check apps/backend/api
+      - name: Check Django project configuration
+        run: uv run --project apps/backend/api --locked python apps/backend/api/manage.py check
+      - name: Verify no missing Django migrations
+        run: uv run --project apps/backend/api --locked python apps/backend/api/manage.py makemigrations --check --dry-run
+      - name: Apply migrations to PostgreSQL
+        run: uv run --project apps/backend/api --locked python apps/backend/api/manage.py migrate --noinput
+      - name: Run backend tests on PostgreSQL
+        run: uv run --project apps/backend/api --locked pytest apps/backend/api/tests
+      - name: Validate local Compose configuration
+        run: docker compose -f infra/compose.yaml config --quiet
+      - name: Smoke test HTTP health endpoint
+        shell: bash
+        run: |
+          uv run --project apps/backend/api --locked python apps/backend/api/manage.py runserver 127.0.0.1:8000 --noreload >core-api.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --max-time 3 http://127.0.0.1:8000/api/v1/health >health.json; then
+              if python3 -c 'import json; assert json.load(open("health.json", encoding="utf-8")) == {"status": "ok"}'; then
+                exit 0
+              fi
+            fi
+            sleep 1
+          done
+          cat core-api.log
+          exit 1
