@@ -1,0 +1,10 @@
+packages:
+  - "apps/web/landing"
+  - "apps/web/dashboard"
+  - "apps/phones"
+# packages/ui and packages/contracts remain placeholders; add them when implemented.
+
+# unrs-resolver's legacy postinstall script is optional; deny it explicitly
+# rather than granting script execution to unrelated dependencies.
+allowBuilds:
+  unrs-resolver: false
