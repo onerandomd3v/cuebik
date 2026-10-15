@@ -1,8 +1,8 @@
 # Cuebik — Product Specification
 
-**Version:** 0.1.7  
-**Status:** Draft for product review  
-**Updated:** 12 October 2026  
+**Version:** 0.1.8  
+**Status:** Approved Release 1 functional baseline; later roadmap capabilities planned  
+**Updated:** 15 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
 **Tagline:** Make every recommendation count.
 
@@ -219,7 +219,7 @@ The ambient connected-intelligence visualization is a visual summary of product 
 - **Manual Review:** Otherwise eligible proposed customer engagements require authorized human review before dispatch.
 - **Controlled Automation:** The initial demonstration supports bank-activated policies permitting automatic authorization for specified **eligible, permitted savings-product engagements**. A matching review mandate and mandatory withholding restrictions still take priority. Fixed-deposit outreach remains subject to bank policies but was **not separately approved for automatic engagement** by this decision. No engagement automatically inherits permission solely from its product category.
 
-**Approved first-release treatment:** SME/credit-related outbound recommendations require authorized human review when otherwise permitted, including in Controlled Automation mode. Proposals requiring additional oversight follow the applicable review rule. Where a mandatory restriction or required communication permission is missing or prohibited, the relevant communication must be withheld. No rule implicitly authorizes automatic dispatch. **These approvals do not select the organization's initial Manual Review or Controlled Automation mode**; that setting remains configurable and its initial value can be settled during implementation. Exact product-specific thresholds, contact limits and permitted windows belong to versioned bank rules and tests—not to invented universal defaults.
+**Approved first-release treatment:** SME/credit-related outbound recommendations require authorized human review when otherwise permitted, including in Controlled Automation mode. Proposals requiring additional oversight follow the applicable review rule. Where a mandatory restriction or required communication permission is missing or prohibited, the relevant communication must be withheld. No rule implicitly authorizes automatic dispatch. **The initial organization-wide mode is now approved as Manual Review**; switching to Controlled Automation requires an authorized, explicit bank action, with any automated engagement still limited by active savings-product rules and mandatory gates. Exact product-specific thresholds, contact limits and permitted windows belong to versioned bank rules and tests—not to invented universal defaults.
 
 **Per-proposal policy decisions**
 
@@ -388,7 +388,7 @@ A customer's recorded savings behavior suggests potential interest, but a requir
 
 ### Scenario L — No active automation rule
 
-A customer-product match is **Recommend** and the customer has valid promotional contact permission, but no active bank policy authorizes automatic outreach. Cuebik records the proposal and does not silently dispatch it. Manual Review mode requires an authorized employee's decision; Controlled Automation only automates engagements covered by an explicitly active, applicable rule.
+A customer-product match is **Recommend** and the customer has valid promotional contact permission, but no active bank policy authorizes automatic outreach. Cuebik records the proposal and does not silently dispatch it. Manual Review mode is the approved starting mode and requires an authorized employee's decision; Controlled Automation only automates engagements covered by an explicitly active, applicable rule.
 
 ---
 
@@ -467,6 +467,8 @@ This section distinguishes the **defined full experience** from the **initial fu
 - Dashboard modules connected to shared records, not unrelated screen-specific fixtures; include one canonical synthetic scenario dataset with auditable expected results.
 - An independently deployed Next.js banking PWA that displays a desktop virtual smartphone and mobile full-screen mode, including Banking App, SMS, Email and Notifications simulations. Seeded customer financial activity can generate source-labeled synthetic events for real Cuebik evaluation. Authorized channel-specific messages and supported feedback must round-trip through the Core API rather than disconnected UI fixtures.
 
+**Approved Release 1 boundary (15 October 2026):** All capabilities in §11.1 collectively form the initial functional release; §11.2 remains the later product roadmap. Completion requires integrated, persistent, authorized behavior across the specified customer, catalog, intelligence, recommendation, agent, policy, approval, engagement, dashboard and simulator experiences. Scaffolds, static responses and illustrative interfaces alone do not satisfy these requirements.
+
 ### 11.2 Subsequent product capabilities
 
 - Multiple employee roles, invitations, granular RBAC, delegated administration, and enterprise identity integration.
@@ -480,13 +482,13 @@ An incomplete feature must be described as planned or illustrative rather than p
 
 ## 12. Dependencies and product decisions to resolve
 
-**The initial product-family scope, eligibility-first explainable matching baseline, internal-only Clarify, safe automation defaults, and synthetic acceptance-evaluation approach are approved** in §5, §8, §10 and §11. Items below are **implementation and test-definition details still to specify**, not requests to re-approve those product decisions. Technical selections belong in `ARCHITECTURE.md`.
+**The initial product-family scope, eligibility-first explainable matching baseline, internal-only Clarify, synthetic acceptance-evaluation approach, Manual Review starting mode and Release 1 scope are approved** in §5, §8, §10 and §11. Items below are **implementation and test-definition details still to specify**, not requests to re-approve those product decisions. Approved technical decisions and remaining engineering specifics belong in `ARCHITECTURE.md`.
 
 1. **Catalog fixtures and eligibility:** Define the fictional product variants, stated terms, eligibility and exclusion test cases for the approved savings, fixed-deposit and SME/credit families.
 2. **Customer signal contract:** Define exact CSV and simulator financial/behavioural summaries, permissible bank-app activity/engagement timing signals, freshness rules, and stated preferences the evaluation will accept.
 3. **Clarification implementation:** Specify internal evidence-gap presentation, authorized source updates and re-evaluation behavior; customer-directed clarification is outside the initial release.
 4. **Product suitability implementation:** Encode bank-defined mandatory exclusions independently from relevance ranking, with credit-related opportunities reviewed and no inferred affordability claims.
-5. **Bank-policy fixtures:** Define example active/draft policies, appropriate contact windows and frequency limits for bank-configured Manual Review, explicitly enabled savings-product Controlled Automation and mandatory credit review; do not invent universal thresholds or imply a newly approved organization-mode default.
+5. **Bank-policy fixtures:** Start new organizations in the approved **Manual Review** mode. Define example active/draft policies, explicit activation of permitted savings-product Controlled Automation, appropriate contact windows and frequency limits, and mandatory credit review; do not invent universal thresholds or assume automated fixed-deposit outreach.
 6. **Approval roles:** Define the one-Super-Admin functional baseline while preserving the future distinction between ownership, review, and policy-activation permissions.
 7. **Delivery evidence:** Define which simulated events justify Sent, Delivered, Failed, or Unknown for Banking App, SMS, and Email.
 8. **Synthetic evaluation details:** Define independent expected outcomes, scenario coverage and pass/fail reports for the approved canonical test suite; do not claim synthetic engagement as production conversion or real customer benefit.
