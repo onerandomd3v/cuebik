@@ -1,4 +1,4 @@
-"""PostgreSQL integration test: no business tables or synthetic data.""" 
+"""PostgreSQL integration test: no business tables or synthetic data."""
 
 import pytest
 from django.db import connection
