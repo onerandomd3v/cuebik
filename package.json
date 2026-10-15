@@ -1,0 +1,19 @@
+{
+  "name": "cuebik-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@11.28.4",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "check:boundaries": "node scripts/check-workspace-boundaries.mjs",
+    "test:boundaries": "node --test scripts/check-workspace-boundaries.test.mjs",
+    "lint": "pnpm --recursive --filter './apps/web/*' --filter './apps/phones' run lint",
+    "typecheck": "pnpm --recursive --filter './apps/web/*' --filter './apps/phones' run typecheck",
+    "build": "pnpm --recursive --filter './apps/web/*' --filter './apps/phones' run build"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

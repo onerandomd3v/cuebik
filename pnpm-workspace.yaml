@@ -1,0 +1,5 @@
+packages:
+  - "apps/web/landing"
+  - "apps/web/dashboard"
+  - "apps/phones"
+# packages/ui and packages/contracts remain placeholders; add them when implemented.

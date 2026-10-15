@@ -2,7 +2,7 @@
 
 > **Purpose:** Explain how the Cuebik monorepo is organized, how its independent projects and shared packages relate, and how to develop, build, test and deploy them as implementation progresses.
 >
-> **Status:** PR #7 established the directory structure. Applications, services and packages are still placeholders, not working projects. Workspace tooling, real commands, dependency checks and deployment pipelines have not been implemented.
+> **Status:** The three frontend applications are being scaffolded with pnpm as part of the frontend foundation PR. Backend services and shared packages remain placeholders. Release targets and backend execution remain unimplemented; do not confuse buildable frontend scaffolds with completed product functionality.
 >
 > **Audience:** Both developers and coding agents may consult this guide for workspace understanding. The separate root-level `AGENTS.md` provides coding-agent and contributor operating instructions.
 
@@ -96,6 +96,28 @@ As each project is implemented, add a concise, **verified** workspace reference 
 - Shared dependencies and how changes to those dependencies affect tests/builds.
 
 A project-specific change should run that project's checks; a shared-package, contract or infrastructure change should also exercise affected consumers. Note commands that are not applicable, instead of pretending they exist. Document failures, not just passing results.
+
+### Frontend workspace (initial scaffold)
+
+**Runtime:** Node.js 24 LTS and pnpm 11.28.4. Run commands from the repository root after installing the pinned runtime and pnpm version.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm --filter @cuebik/landing dev      # http://localhost:3000
+pnpm --filter @cuebik/dashboard dev    # http://localhost:3001
+pnpm --filter @cuebik/phones dev       # http://localhost:3002
+pnpm --filter @cuebik/landing build
+pnpm --filter @cuebik/dashboard build
+pnpm --filter @cuebik/phones build
+pnpm run lint
+pnpm run typecheck
+pnpm run check:boundaries
+pnpm run test:boundaries
+```
+
+Each frontend app has its own source, package manifest, TypeScript/ESLint configuration and Next.js build target. The root pnpm workspace coordinates installs without combining the three apps. The optional `packages/ui/` and `packages/contracts/` directories remain placeholders rather than installable packages. Import-boundary checks reject frontend cross-app private-source imports and phones-to-Cuebik UI imports; this check is not a replacement for runtime authorization.
+
+**Verification:** These commands are proposed for CI verification on Node 24; do not mark them as successfully exercised until a run confirms the results. Backend commands, browser/PWA completeness and independent deployment infrastructure are not established by this scaffold.
 
 ## 6. Evolving the implemented workspace
 

@@ -1,0 +1,57 @@
+name: Frontend checks
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/frontend.yml"
+      - ".nvmrc"
+      - "package.json"
+      - "pnpm-*.yaml"
+      - "scripts/**"
+      - "apps/web/**"
+      - "apps/phones/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/frontend.yml"
+      - ".nvmrc"
+      - "package.json"
+      - "pnpm-*.yaml"
+      - "scripts/**"
+      - "apps/web/**"
+      - "apps/phones/**"
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.28.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test:boundaries
+      - run: pnpm run check:boundaries
+  apps:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ["@cuebik/landing", "@cuebik/dashboard", "@cuebik/phones"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.28.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter "${{ matrix.package }}" run lint
+      - run: pnpm --filter "${{ matrix.package }}" run typecheck
+      - run: pnpm --filter "${{ matrix.package }}" run build
