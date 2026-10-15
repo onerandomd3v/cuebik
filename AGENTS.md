@@ -15,9 +15,6 @@ Consult the documents relevant to the assigned task:
 - `BRAND.md`: product naming, identity and messaging.
 - `apps/web/DESIGN.md`: Cuebik landing/dashboard interface design.
 - `docs/WORKSPACE.md`: repository ownership, shared dependencies and verified development workflows.
-- `docs/DECISION_REGISTER.md`: approved implementation decisions and remaining decision gates.
-- `docs/CONTRACT_BASELINE.md`: cross-language schema/consumer requirements and acceptance checks.
-- `docs/RELEASE_1_PLAN.md`: Release 1 workstream responsibilities and dependency plan.
 
 Do not read every document before every trivial edit. Read what the task requires. Historical presentations, illustrative examples and unimplemented proposals do not override current approved specifications. Where sources conflict or approval is unclear, identify the conflict rather than silently selecting a new product or architecture decision.
 
@@ -49,7 +46,6 @@ Do not read every document before every trivial edit. Read what the task require
 ## Git and delivery workflow
 
 - Use a feature branch for changes intended for review; do not commit directly to `main`.
-- For implementation tasks, identify one accountable human engineer, the authoritative product behavior, touched paths, dependent contracts, explicit acceptance/negative tests and approved dependency scope before asking Codex to implement. Planning labels A–D are not actual assigned collaborator accounts.
 - Submit work through a pull request for human review when the task calls for repository delivery.
 - Never automatically merge a pull request, bypass review, or force-push shared history.
 - Do not deploy, send real customer communications, rotate credentials or modify live infrastructure without explicit authorization.

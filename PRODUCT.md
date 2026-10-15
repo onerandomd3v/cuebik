@@ -467,7 +467,7 @@ This section distinguishes the **defined full experience** from the **initial fu
 - Dashboard modules connected to shared records, not unrelated screen-specific fixtures; include one canonical synthetic scenario dataset with auditable expected results.
 - An independently deployed Next.js banking PWA that displays a desktop virtual smartphone and mobile full-screen mode, including Banking App, SMS, Email and Notifications simulations. Seeded customer financial activity can generate source-labeled synthetic events for real Cuebik evaluation. Authorized channel-specific messages and supported feedback must round-trip through the Core API rather than disconnected UI fixtures.
 
-**Approved Release 1 boundary (15 October 2026):** All capabilities in §11.1 collectively form the initial **fully functional** release. Completion requires integrated, persisted and authorized behavior across the customer, catalog, intelligence, recommendation, agent, policy, approval, engagement, dashboard and banking simulator experiences; code scaffolds, static outputs or screenshots alone do not qualify. §11.2 is the later roadmap. The team has set an aggressive **20 October 2026 target**; a date does not waive acceptance requirements. Delivery projects and acceptance checkpoints are documented in [docs/RELEASE_1_PLAN.md](docs/RELEASE_1_PLAN.md).
+**Approved Release 1 boundary (15 October 2026):** All capabilities in §11.1 collectively form the initial functional release; §11.2 remains the later product roadmap. Completion requires integrated, persistent, authorized behavior across the specified customer, catalog, intelligence, recommendation, agent, policy, approval, engagement, dashboard and simulator experiences. Scaffolds, static responses and illustrative interfaces alone do not satisfy these requirements.
 
 ### 11.2 Subsequent product capabilities
 
@@ -482,7 +482,7 @@ An incomplete feature must be described as planned or illustrative rather than p
 
 ## 12. Dependencies and product decisions to resolve
 
-**The initial product-family scope, eligibility-first explainable matching baseline, internal-only Clarify, synthetic acceptance-evaluation approach, Manual Review starting mode and Release 1 scope are approved** in §5, §8, §10 and §11. Items below are **implementation and test-definition details still to specify**, not requests to re-approve those product decisions. The agreed implementation decisions are recorded in [docs/DECISION_REGISTER.md](docs/DECISION_REGISTER.md); technology choices remain in `ARCHITECTURE.md`.
+**The initial product-family scope, eligibility-first explainable matching baseline, internal-only Clarify, synthetic acceptance-evaluation approach, Manual Review starting mode and Release 1 scope are approved** in §5, §8, §10 and §11. Items below are **implementation and test-definition details still to specify**, not requests to re-approve those product decisions. Approved technical decisions and remaining engineering specifics belong in `ARCHITECTURE.md`.
 
 1. **Catalog fixtures and eligibility:** Define the fictional product variants, stated terms, eligibility and exclusion test cases for the approved savings, fixed-deposit and SME/credit families.
 2. **Customer signal contract:** Define exact CSV and simulator financial/behavioural summaries, permissible bank-app activity/engagement timing signals, freshness rules, and stated preferences the evaluation will accept.
