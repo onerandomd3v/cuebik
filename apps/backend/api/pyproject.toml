@@ -1,0 +1,32 @@
+[project]
+name = "cuebik-core-api"
+version = "0.1.0"
+description = "Minimal Django Core API foundation for Cuebik"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "django>=5.2,<5.3",
+    "django-ninja>=1.7,<1.8",
+    "psycopg[binary]>=3.2,<4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8,<10",
+    "pytest-django>=4.10,<5",
+    "ruff>=0.13,<1",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "cuebik_api.settings"
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
