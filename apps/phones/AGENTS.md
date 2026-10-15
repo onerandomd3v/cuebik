@@ -5,7 +5,7 @@ Applies to `apps/phones/` and its descendants. Follow the repository-root `AGENT
 ## Application identity and ownership
 
 - This directory contains **one standalone Next.js virtual-phone application** with Banking App, SMS, Email and Notifications views.
-- Represent the approved fictional banking environment, Harbourline Bank. Do not claim a real banking integration, reproduce official bank branding, or imply that simulated transactions move actual money.
+- Represent the approved fictional banking environment, CueBank. Do not claim a real banking integration, reproduce official bank branding, or imply that simulated transactions move actual money.
 - Maintain a bank-specific interface and component system independent of Cuebik's landing/dashboard design.
 - Do not import `packages/ui/`, `apps/web/` components, their styling or another frontend application's private implementation.
 - Reuse components freely **within phones** where appropriate. Independent visual design does not mean duplicating every phone component.
