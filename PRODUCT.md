@@ -2,7 +2,7 @@
 
 **Version:** 0.1.8  
 **Status:** Approved Release 1 functional baseline; later roadmap capabilities planned  
-**Updated:** 12 October 2026  
+**Updated:** 15 October 2026  
 **Product category:** Banking Intelligence & Engagement Platform  
 **Tagline:** Make every recommendation count.
 
