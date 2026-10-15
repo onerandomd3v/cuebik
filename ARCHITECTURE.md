@@ -1,8 +1,8 @@
 # Cuebik — System Architecture
 
-**Version:** 0.4.14  
+**Version:** 0.4.15  
 **Status:** Working draft — approved direction with open implementation decisions  
-**Updated:** 13 October 2026
+**Updated:** 15 October 2026
 
 > **Document scope:** This document records agreed technologies and proposed implementation details. Approved decisions are distinguishable from unresolved vendor, workload, security, and configuration choices. [`PRODUCT.md`](PRODUCT.md) remains authoritative for product behavior. No unimplemented infrastructure or real integrations are represented as operational.
 
@@ -221,7 +221,7 @@ The Core API should authenticate the demo customer session and derive bank/custo
 
 ## 3. Approved monorepo organization
 
-The **directory organization** is approved and has been scaffolded with tracked directory placeholders. This layout does **not** mean the applications, backend services, shared packages or infrastructure have been implemented. Every deployable app/service lives under `apps/`: the independent landing and staff dashboard apps are grouped in `apps/web/`, while the fictional virtual-phone PWA has its own top-level `apps/phones/` directory. The plural folder name labels a **single standalone simulation application**, not separate SMS, Email or Banking App deployments.
+The **directory organization** is approved. The landing, dashboard and phones applications now have initial standalone Next.js scaffolds and CI-verified builds; backend services, shared packages and infrastructure remain placeholders. This does **not** mean the banking product, backend services or deployment infrastructure have been implemented. Every deployable app/service lives under `apps/`: the independent landing and staff dashboard apps are grouped in `apps/web/`, while the fictional virtual-phone PWA has its own top-level `apps/phones/` directory. The plural folder name labels a **single standalone simulation application**, not separate SMS, Email or Banking App deployments.
 
 ```text
 cuebik/
@@ -251,7 +251,7 @@ cuebik/
 
 **Frontend component ownership:** `packages/ui/` is reserved for **optional reusable Cuebik-branded UI primitives** that `apps/web/landing/` and `apps/web/dashboard/` may deliberately consume. It does not contain a combined app shell. The **dashboard sidebar, top navigation, layouts and domain-specific screen components belong to `apps/web/dashboard/`** and can be reused across its routes; the landing application owns its own page shell. **`apps/phones/` must not import `packages/ui/`, `apps/web/` components, or Cuebik dashboard/landing styling.** Phones has its own internal components and bank-specific visual system, while integrating with backend APIs through explicit versioned contracts. These are dependency boundaries; each application remains independently buildable and deployable.
 
-`apps/web/` is **a grouping directory, not one combined frontend build**. When implementation begins, `apps/web/landing/`, `apps/web/dashboard/` and `apps/phones/` each own their app source, application manifest, build configuration, tests and deployment target. A contributor may work on, build and deploy the landing app without rebuilding the dashboard, PWA or backend; likewise, the dashboard and PWA release independently. An app may deliberately consume versioned shared packages or APIs, whose contract changes can affect consumers; independence does not mean zero shared dependencies. No app scaffolding/configuration exists yet. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
+`apps/web/` is **a grouping directory, not one combined frontend build**. The initial `apps/web/landing/`, `apps/web/dashboard/` and `apps/phones/` scaffolds each own their app source, manifest and build configuration; application-specific functional tests and deployment targets remain to be implemented. A contributor may work on, build and deploy the landing app without rebuilding the dashboard, PWA or backend; likewise, the dashboard and PWA release independently. An app may deliberately consume versioned shared packages or APIs, whose contract changes can affect consumers; independence does not mean zero shared dependencies. The three frontend scaffolds and pnpm configuration exist; backend workloads, shared packages and release infrastructure are not yet implemented. Core modules share authorized state; separate services use documented contracts. No `services/` or `infrastructure/` top-level directory is planned, and no initial GPU/model-server application directory is required.
 
 ## 4. Intelligence and execution design rules
 
@@ -387,4 +387,4 @@ The **approved technologies and their reasons** are maintained in [§1](#1-techn
 6. **SMS and Email provider adapters:** Africa's Talking and SendByte are the selected initial providers. Validate their adapter integrations and normalized feedback behavior during implementation; demo inboxes remain simulated by default.
 7. **Customer ingestion, policy fixtures and evaluation:** Implement approved CSV customer imports and simulator-originated customer events through the same validated bank-scoped processing path. Define exact CSV schemas and ingestion mechanics; configure fictional savings/fixed-deposit/SME-credit catalog terms and review/automation policies; build the agreed **canonical synthetic acceptance dataset** with independently defined expected outcomes. An interactive evidence graph remains optional; neither input path requires a new database or external LLM dependency by default.
 
-**Repository scaffolding status:** The approved monorepo directories and relocated [`apps/web/DESIGN.md`](apps/web/DESIGN.md) are present. Placeholder directories contain no implemented applications, services, contracts, or deployment configuration.
+**Repository scaffolding status:** The approved monorepo directories and relocated [`apps/web/DESIGN.md`](apps/web/DESIGN.md) are present. Landing, dashboard and phones have independent frontend scaffolds and CI-verified build/start checks. Backend workloads, shared contracts/UI packages, deployment targets and production integrations are still unimplemented.

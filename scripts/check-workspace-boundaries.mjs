@@ -15,7 +15,7 @@ const knownPackageNames = {
   "@cuebik/dashboard": "dashboard",
   "@cuebik/phones": "phones",
 };
-const relevantExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
+const relevantExtensions = new Set([".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs", ".css"]);
 const skippedDirectories = new Set(["node_modules", ".next", "dist", "out", ".git"]);
 
 function isWithin(location, directory) {
@@ -44,6 +44,17 @@ export function validateImport(owner, importer, specifier) {
 }
 
 export function getImportSpecifiers(source, fileName = "file.ts") {
+  if (path.extname(fileName) === ".css") {
+    // Next.js currently supports CSS. Inspect @import (including url() syntax)
+    // and ignore commented declarations without executing stylesheet code.
+    const withoutComments = source.replace(/\/\*[\s\S]*?\*\//g, "");
+    const specifiers = [];
+    const imports = /@import\s+(?:url\(\s*)?(?:"([^"]+)"|'([^']+)'|([^\s)'";]+))/gi;
+    for (const match of withoutComments.matchAll(imports)) {
+      specifiers.push(match[1] ?? match[2] ?? match[3]);
+    }
+    return specifiers;
+  }
   const ast = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const specifiers = [];
   function visit(node) {
@@ -51,11 +62,23 @@ export function getImportSpecifiers(source, fileName = "file.ts") {
         node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
       specifiers.push(node.moduleSpecifier.text);
     }
+    if (ts.isImportEqualsDeclaration(node) &&
+        ts.isExternalModuleReference(node.moduleReference) &&
+        node.moduleReference.expression &&
+        ts.isStringLiteral(node.moduleReference.expression)) {
+      specifiers.push(node.moduleReference.expression.text);
+    }
     if (ts.isCallExpression(node) && node.arguments.length &&
         (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
          (ts.isIdentifier(node.expression) && node.expression.text === "require")) &&
-        ts.isStringLiteral(node.arguments[0])) {
+        (ts.isStringLiteral(node.arguments[0]) ||
+         ts.isNoSubstitutionTemplateLiteral(node.arguments[0]))) {
       specifiers.push(node.arguments[0].text);
+    }
+    if (ts.isImportTypeNode(node) &&
+        ts.isLiteralTypeNode(node.argument) &&
+        ts.isStringLiteral(node.argument.literal)) {
+      specifiers.push(node.argument.literal.text);
     }
     ts.forEachChild(node, visit);
   }
