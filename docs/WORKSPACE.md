@@ -16,6 +16,9 @@
 | [`apps/web/DESIGN.md`](../apps/web/DESIGN.md) | Landing/dashboard visual and interaction specifications |
 | **`docs/WORKSPACE.md`** | Repository layout, dependency ownership, local-development setup, build/test workflows and release isolation |
 | **`AGENTS.md`** | Concise working rules for developers and coding agents, with links to the authoritative documents |
+| [`docs/DECISION_REGISTER.md`](DECISION_REGISTER.md) | Approved Release 1 decisions and remaining concrete decision gates |
+| [`docs/CONTRACT_BASELINE.md`](CONTRACT_BASELINE.md) | OpenAPI contract strategy, required producer/consumer test groups and synthetic fixture checklist |
+| [`docs/RELEASE_1_PLAN.md`](RELEASE_1_PLAN.md) | Five Linear delivery projects, proposed module ownership, dependencies and target checkpoints |
 
 This document explains **where work belongs and how projects fit together**; it must not re-specify product policies, visual measurements or backend algorithms. Refer to the other documents for those decisions. The root-level `AGENTS.md` links here rather than restating the workspace description.
 
@@ -156,11 +159,17 @@ The following is a **living implementation register**, distinguishing implemente
 | Workspace dependencies | Explicit app/package manifests and controlled dependency installation | **Frontend implemented, CI-verified:** pnpm workspace, manifests, pinned pnpm, lockfile and frozen install; shared packages not yet implemented |
 | Local development | Independent start, test, lint and build targets per project | **Frontends CI-verified** for build/lint/typecheck/start; interactive frontend development not tested. **Core API CI-verified** for locked install, migrations, tests and HTTP startup; local Compose startup and interactive development commands are documented but not yet tested on a contributor machine |
 | Import enforcement | Checks reject private cross-app imports and phones importing Cuebik web UI | **Frontend implemented, CI-verified:** TypeScript AST-based source-import check and negative tests; not a substitute for access control or future package export rules |
-| Interface validation | Versioned producer/consumer checks | **Pending:** schema strategy and compatibility checks |
+| Interface validation | Versioned producer/consumer checks | **Strategy approved, implementation pending:** versioned Core API/OpenAPI contracts and generated TypeScript consumers; snapshot tests and actual codegen/compatibility checks are not yet implemented |
 | Backend execution | Defined Core API and appropriate worker startup/test paths | **Core API scaffold implemented and CI-verified:** Django settings, Ninja liveness route, uv lock, PostgreSQL migrations/tests and Compose configuration; local Compose container startup unverified. Intelligence, agent and delivery workers pending |
 | CI and release isolation | Relevant checks and deployments run for changed projects and shared consumers | **Partially implemented:** independent frontend CI and targeted backend API CI jobs exist; affected-project-only execution, deployments and deployment permissions remain pending |
 
 **Boundary verification:** isolated frontend app builds and HTTP startup, plus forbidden phones-to-`packages/ui` import tests, now pass in CI. Independent **deployments**, dependency-aware test selection and shared-contract consumer checks remain future acceptance criteria, not completed capabilities.
+
+### Four-engineer and Codex collaboration
+
+The repository is publicly visible, and the four engineers already have collaborator access. `PRODUCT.md` remains authoritative for product behavior and `ARCHITECTURE.md` for technology and state ownership; Linear, when populated, tracks **delivery ownership, issues, dependencies and milestones**, not alternative banking business rules. [RELEASE_1_PLAN.md](RELEASE_1_PLAN.md) records the five agreed development project areas and tentative engineer responsibility boundaries. [DECISION_REGISTER.md](DECISION_REGISTER.md) records cross-team approval gates.
+
+Codex work uses an approved issue, one accountable human owner, affected paths, acceptance tests, and checked upstream/downstream contracts. Engineering ownership labels A–D are **not real GitHub usernames**. A functional GitHub `CODEOWNERS` file and required branch-review enforcement cannot be configured from placeholders; names/handles and enforcement settings must be confirmed separately. The PR template provides a checklist, not automatic protection. This public repository must never contain production banking/customer data or secrets.
 
 ### Keeping this guide current
 

@@ -17,7 +17,7 @@
 - [ ] Actual lint/typecheck/tests performed (list commands and results below)
 - [ ] Denied/invalid/duplicate/stale-state cases tested where relevant
 - [ ] Affected producer and consumers checked for schema changes
-- [ ] Documentation and \`docs/WORKSPACE.md\` updated only where applicable
+- [ ] Documentation and `docs/WORKSPACE.md` updated only where applicable
 - [ ] No real credentials/customer data, fabricated delivery, unsupported feature claims
 - [ ] No automatic merge or production deployment
 

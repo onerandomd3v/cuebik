@@ -1,6 +1,6 @@
 # Cuebik — Producer/consumer contract baseline
 
-**Status:** Approved schema/versioning *strategy*; actual machine-readable domain schemas and generated clients are still missing. \`/api/v1/health\` is currently only a liveness route, not a banking contract. Product authority remains \`PRODUCT.md\`; integration authority remains \`ARCHITECTURE.md\`.
+**Status:** Approved schema/versioning *strategy*; actual machine-readable domain schemas and generated clients are still missing. `/api/v1/health` is currently only a liveness route, not a banking contract. Product authority remains `PRODUCT.md`; integration authority remains `ARCHITECTURE.md`.
 
 **Producer:** Django Ninja Core API and its OpenAPI output. **Consumers:** independently runnable Next.js dashboard, banking PWA, and authorized Python intelligence/agent/delivery workloads. Generated TypeScript types/clients must derive from reviewed OpenAPI, not copied hand-authored parallel definitions. Generator/package selection requires normal production-dependency review if applicable.
 
@@ -22,4 +22,4 @@ Each concrete schema PR needs: declared owning engineer; request/response/valida
 
 ### One synthetic reference fixture suite
 
-Create **one canonical Harbourline Bank fixture** with explicit savings/fixed-deposit/SME-credit terms, CSV columns, permissible events, consent/policy state, expected eligibility and ranked candidate outputs, approval decisions and simulation acknowledgements. Keep expected outputs independently authored before code is tuned. Include a second isolated test bank for cross-tenant denials. Link expected case identifiers to \`PRODUCT.md §8\` scenarios A–L. Test results on synthetic data do not represent financial suitability, conversion, or provider delivery.
+Create **one canonical Harbourline Bank fixture** with explicit savings/fixed-deposit/SME-credit terms, CSV columns, permissible events, consent/policy state, expected eligibility and ranked candidate outputs, approval decisions and simulation acknowledgements. Keep expected outputs independently authored before code is tuned. Include a second isolated test bank for cross-tenant denials. Link expected case identifiers to `PRODUCT.md §8` scenarios A–L. Test results on synthetic data do not represent financial suitability, conversion, or provider delivery.

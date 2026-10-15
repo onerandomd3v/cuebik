@@ -1,6 +1,6 @@
 # Cuebik — Four-engineer Release 1 delivery plan
 
-**Release boundary:** \`PRODUCT.md §11.1\` defines the **complete, functioning** Release 1; §11.2 is the separately tracked later roadmap. The initial repository has independently building frontend scaffolds and a runnable Django health-only foundation, **not** functional banking, agent or delivery features.
+**Release boundary:** `PRODUCT.md §11.1` defines the **complete, functioning** Release 1; §11.2 is the separately tracked later roadmap. The initial repository has independently building frontend scaffolds and a runnable Django health-only foundation, **not** functional banking, agent or delivery features.
 
 **Date:** 15 October 2026. **Target:** 20 October 2026. This five-day window is an **exceptionally aggressive stretch target**, not guaranteed completion. Four engineers using Codex can accelerate implementation but not bypass authorization, integration or tests. If essential acceptance cases do not pass on October 20, disclose the failure and remaining work rather than declaring completion or silently removing requirements.
 
@@ -34,7 +34,7 @@ Engineer A–D are **provisional role labels** until the four actual collaborato
 | **17 Oct** | Integrated CSV/events and matching; dashboard reads actual recommendation/evidence | Recommend/Clarify/Suppress + provenance + persisted API round-trip |
 | **18 Oct** | Policy activation, reviewer capability, exact-message approvals; agent proposals; permitted simulator event | Denied/approved state-transition tests and no unauthorized customer inbox |
 | **19 Oct** | Temporal execution, simulated one-channel inbox and feedback; cross-service defects | Deduplication, stale permission/product block and customer feedback visible in dashboard |
-| **20 Oct** | Integrate, stabilize and run full canonical acceptance suite | \`PRODUCT.md\` scenarios A–L with actual persisted service records, required CI green and cross-team review |
+| **20 Oct** | Integrate, stabilize and run full canonical acceptance suite | `PRODUCT.md` scenarios A–L with actual persisted service records, required CI green and cross-team review |
 
 The schedule has essentially no contingency. **Do not defer integration until the last day.** Escalate contract disputes and failing tests immediately. At any checkpoint, reforecast honestly if prerequisites are unmet; request scope changes explicitly rather than downgrading an acceptance criterion without approval.
 
@@ -53,6 +53,6 @@ The schedule has essentially no contingency. **Do not defer integration until th
 
 Linear is the operational system for **issues, owner, dependencies, milestones and status**, not the authority for product behavior or architecture. Each issue requires exactly one accountable human engineer, mapped module paths, linked approved specification/scenario, input/output contract, dependencies, negative tests and acceptance proof. Assign one cross-team reviewer where a shared interface, permission or lifecycle state changes; no Codex-run PR auto-merges.
 
-Use one bounded issue/branch per reviewable slice, comply with applicable \`AGENTS.md\`, keep one shared interface owner, and run CI plus affected consumers. For this compressed window hold a short **twice-daily integration checkpoint** and retain explicit red/green status for every acceptance case. Code throughput, screenshot polish and model-generated PR count are **not** completion evidence.
+Use one bounded issue/branch per reviewable slice, comply with applicable `AGENTS.md`, keep one shared interface owner, and run CI plus affected consumers. For this compressed window hold a short **twice-daily integration checkpoint** and retain explicit red/green status for every acceptance case. Code throughput, screenshot polish and model-generated PR count are **not** completion evidence.
 
 **Still requiring team input:** engineer names/handles, exact five-project lead for Project 5, whether October 20 includes public deployment (not implied here), exact unimplemented schema/fixture values, model/Temporal operational choices. Do not put actual credentials or customer records in the public repository.
