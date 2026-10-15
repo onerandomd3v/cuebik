@@ -1,6 +1,6 @@
 # Cuebik — Brand Guidelines
 
-**Version:** 1.3.2  
+**Version:** 1.3.3  
 **Updated:** 12 October 2026  
 **Applies to:** Cuebik's website, product interfaces, presentations, documentation, and marketing materials.
 
@@ -123,6 +123,8 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 
 **Banking customer experience:** Cuebik handles recommendation intelligence through connections with existing bank systems. Customers see approved outcomes within their bank's applications and channels. Follow the bank's branding requirements; do not make Cuebik look like the bank itself.
 
+**CueBank fictional simulator:** **CueBank** is the canonical name of Cuebik's fictional demonstration bank, **not** a rename of the Cuebik platform or a real banking partner. Its standalone virtual-phone experience and dedicated synthetic-data bank organization use a distinct bank-inspired visual identity, separate from Cuebik's yellow-and-black brand system. Make its fictional/simulated nature visible; do not reuse Cuebik's wordmark as CueBank's logo or copy a real bank's official name, logo or proprietary screens. Normal bank workspaces retain their own authorized identities and do not inherit CueBank's seeded data. The product behavior and data isolation rules remain defined in `PRODUCT.md` and `ARCHITECTURE.md`.
+
 **Pitch decks and marketing:** Use the full logo prominently on covers, clear product messaging, high-contrast layouts, and selective yellow accents. Use diagrams or product mockups instead of dense paragraphs.
 
 ---
@@ -142,6 +144,7 @@ Avoid generic robot imagery, excessive glows, ornamental gradients, crowded char
 | **Policy & Autonomy Engine** | Enforces bank-defined automation, human review, and engagement withholding controls |
 | **Internal Banking Dashboard** | The bank team's monitoring, insight, and control workspace |
 | **Organization Workspace** | A bank-specific workspace where authorized employees monitor recommendations, manage team access, and control engagement |
+| **CueBank** | Fictional demonstration bank and simulator identity, separate from Cuebik and real institutional bank workspaces |
 
 **Preferred messaging:** “Banking intelligence and engagement.” “Relevant products for individual customers.” “Intelligent matching and personalized engagement.” “Banks stay in control.” “Make every recommendation count.”
 
