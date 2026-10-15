@@ -41,7 +41,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ["@cuebik/landing", "@cuebik/dashboard", "@cuebik/phones"]
+        include:
+          - { package: "@cuebik/landing", port: 3000 }
+          - { package: "@cuebik/dashboard", port: 3001 }
+          - { package: "@cuebik/phones", port: 3002 }
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -55,3 +58,19 @@ jobs:
       - run: pnpm --filter "${{ matrix.package }}" run lint
       - run: pnpm --filter "${{ matrix.package }}" run typecheck
       - run: pnpm --filter "${{ matrix.package }}" run build
+      - name: Smoke test standalone app
+        shell: bash
+        run: |
+          pnpm --filter "${{ matrix.package }}" run start >app-start.log 2>&1 &
+          app_pid=$!
+          trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --max-time 3 "http://127.0.0.1:${{ matrix.port }}/" >page.html; then
+              if grep -q "Scaffold only" page.html; then
+                exit 0
+              fi
+            fi
+            sleep 1
+          done
+          cat app-start.log
+          exit 1
